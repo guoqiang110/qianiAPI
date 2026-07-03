@@ -44,7 +44,7 @@ const highlights = [
   { title: "在线生图", desc: "GPT Image 2、Seedream、万相、混元同屏工作台", href: "/zh/studio", badge: "热门" },
   { title: "模型定价", desc: "展示价与真实计费价逐步同步，方便销售对外报价", href: "/zh/pricing", badge: "定价" },
   { title: "图像工具", desc: "图生图、修复、背景移除集中到一个入口", href: "/zh/image-tools", badge: "工具" },
-  { title: "接入文档", desc: "面向 Codex、Claude Code、Cherry Studio 的接入说明", href: "/zh/docs", badge: "文档" },
+  { title: "接入文档", desc: "面向 Codex、Claude Code、Cherry Studio 的接入说明", href: "/zh/docs", badge: "文档" },{ title: "SEO 工具", desc: "Prompt 库 · GEO 诊断 · 内容优化工具链", href: "/zh/tools", badge: "SEO" },
   { title: "控制台", desc: "充值、API Key、用量日志与模型配置后台", href: "/console", badge: "账户" },
 ];
 
@@ -246,3 +246,4 @@ export default function Home() {
     </div>
   );
 }
+

@@ -10,6 +10,19 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
+    env:
+      NODE_ENV: production
+      NEXT_PUBLIC_LOG_LEVEL: debug
+      NEXT_PUBLIC_302_WEBSITE_URL_GLOBAL: https://qianxi-api.com/
+      NEXT_PUBLIC_302_WEBSITE_URL_CHINA: https://qianxi-api.com/
+      NEXT_PUBLIC_API_URL: https://qianxi-api.com
+      NEXT_PUBLIC_AUTH_API_URL: https://qianxi-api.com
+      NEXT_PUBLIC_AUTH_PATH: /auth
+      NEXT_PUBLIC_IS_CHINA: true
+      NEXT_PUBLIC_DEFAULT_LOCALE: zh
+      NEXT_PUBLIC_DEFAULT_MODEL_NAME: gpt-4o-mini
+      NEXT_PUBLIC_HIDE_BRAND: true
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4

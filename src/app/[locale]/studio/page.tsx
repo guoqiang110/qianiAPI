@@ -7,7 +7,17 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Download, Sparkles, Clock, Upload, X } from "lucide-react";
+import {
+  Loader2,
+  Download,
+  Sparkles,
+  Clock,
+  Upload,
+  X,
+  BookmarkPlus,
+  Trash2,
+  Images,
+} from "lucide-react";
 
 type CatalogModel = {
   id: string;
@@ -27,7 +37,17 @@ type SessionRecord = {
   hasRef?: boolean;
 };
 
+type LibraryItem = {
+  id: string;
+  image: string;
+  model: string;
+  prompt: string;
+  size: string;
+  createdAt: string;
+};
+
 const IMAGE_EDIT_MODELS = new Set(["wanx2.1-imageedit"]);
+const LIBRARY_STORAGE_KEY = "qianxi_image_library";
 
 function normalizeCatalogModel(input: unknown): CatalogModel | null {
   if (!input || typeof input !== "object") return null;
@@ -44,7 +64,8 @@ function normalizeCatalogModel(input: unknown): CatalogModel | null {
         ? raw.provider
         : "乾羲适配层",
     badge: typeof raw.badge === "string" ? raw.badge : undefined,
-    description: typeof raw.description === "string" ? raw.description : undefined,
+    description:
+      typeof raw.description === "string" ? raw.description : undefined,
     enabled: raw.enabled === false ? false : true,
   };
 }
@@ -71,6 +92,35 @@ function extractImageUrls(payload: unknown): string[] {
     .filter((item): item is string => Boolean(item));
 }
 
+function loadLibrary(): LibraryItem[] {
+  try {
+    const stored = window.localStorage.getItem(LIBRARY_STORAGE_KEY);
+    if (!stored) return [];
+    const parsed = JSON.parse(stored);
+    return Array.isArray(parsed)
+      ? parsed.filter(
+          (item): item is LibraryItem =>
+            !!item &&
+            typeof item === "object" &&
+            typeof item.id === "string" &&
+            typeof item.image === "string" &&
+            typeof item.model === "string" &&
+            typeof item.prompt === "string" &&
+            typeof item.size === "string" &&
+            typeof item.createdAt === "string"
+        )
+      : [];
+  } catch {
+    return [];
+  }
+}
+
+function persistLibrary(items: LibraryItem[]) {
+  try {
+    window.localStorage.setItem(LIBRARY_STORAGE_KEY, JSON.stringify(items));
+  } catch {}
+}
+
 function isCnImageModel(model: string) {
   return /wanx|cogview|seedream|hy-image|hunyuan/i.test(model);
 }
@@ -83,6 +133,7 @@ export default function StudioPage() {
   const [catalog, setCatalog] = useState<CatalogModel[]>([]);
   const [sessionHistory, setSessionHistory] = useState<SessionRecord[]>([]);
   const [images, setImages] = useState<string[]>([]);
+  const [library, setLibrary] = useState<LibraryItem[]>([]);
   const [status, setStatus] = useState("加载生图工作台...");
   const [loading, setLoading] = useState(false);
   const [prompt, setPrompt] = useState(
@@ -108,6 +159,7 @@ export default function StudioPage() {
       const stored = window.localStorage.getItem("qianxi_api_key");
       if (stored) setApiKey(stored);
     } catch {}
+    setLibrary(loadLibrary());
   }, []);
 
   useEffect(() => {
@@ -133,10 +185,15 @@ export default function StudioPage() {
         return data;
       })
       .then((cfg) => {
-        const rawModels = Array.isArray((cfg as { models?: unknown[] }).models) ? ((cfg as { models?: unknown[] }).models ?? []) : [];
+        const rawModels = Array.isArray((cfg as { models?: unknown[] }).models)
+          ? ((cfg as { models?: unknown[] }).models ?? [])
+          : [];
         const models = rawModels
           .map(normalizeCatalogModel)
-          .filter((item): item is CatalogModel => item !== null && item.enabled !== false);
+          .filter(
+            (item): item is CatalogModel =>
+              item !== null && item.enabled !== false
+          );
 
         setCatalog(models);
         if (models.length) {
@@ -151,7 +208,9 @@ export default function StudioPage() {
           setStatus("当前没有可用模型，请检查上游配置。");
         }
       })
-      .catch((err) => setStatus("加载模型目录失败：" + (err?.message || "unknown")));
+      .catch((err) =>
+        setStatus("加载模型目录失败：" + (err?.message || "unknown"))
+      );
   }, []);
 
   useEffect(() => {
@@ -185,6 +244,39 @@ export default function StudioPage() {
     setRefImage(null);
     setRefImageName("");
     if (fileInputRef.current) fileInputRef.current.value = "";
+  }
+
+  function saveToLibrary(image: string) {
+    const item: LibraryItem = {
+      id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      image,
+      model,
+      prompt: prompt.trim(),
+      size,
+      createdAt: new Date().toLocaleString(),
+    };
+
+    setLibrary((prev) => {
+      const next = [item, ...prev].slice(0, 100);
+      persistLibrary(next);
+      return next;
+    });
+    setStatus("已保存到作品库");
+  }
+
+  function removeLibraryItem(id: string) {
+    setLibrary((prev) => {
+      const next = prev.filter((item) => item.id !== id);
+      persistLibrary(next);
+      return next;
+    });
+    setStatus("已从作品库删除");
+  }
+
+  function clearLibrary() {
+    setLibrary([]);
+    persistLibrary([]);
+    setStatus("作品库已清空");
   }
 
   async function handleGenerate(e: React.FormEvent) {
@@ -276,7 +368,9 @@ export default function StudioPage() {
     <div className="flex-1 max-w-7xl mx-auto px-4 md:px-6 py-6">
       <div className="mb-6">
         <Badge className="mb-3">QIANXI API STUDIO · PHASE 2</Badge>
-        <h1 className="text-3xl font-extrabold tracking-tight mb-2">在线生图工作台</h1>
+        <h1 className="text-3xl font-extrabold tracking-tight mb-2">
+          在线生图工作台
+        </h1>
         <p className="text-sm text-muted-foreground max-w-2xl">
           支持 GPT Image 2、Seedream、万相、CogView、混元等模型。国内模型走乾羲适配层，OpenAI 系模型需提供 API Key。
         </p>
@@ -319,7 +413,7 @@ export default function StudioPage() {
               <div className="space-y-2">
                 <Label>参考图</Label>
                 {refImage ? (
-                <div className="relative overflow-hidden rounded-lg border border-primary/15 bg-gradient-to-br from-primary/10 via-background to-accent/50">
+                  <div className="relative overflow-hidden rounded-lg border border-primary/15 bg-gradient-to-br from-primary/10 via-background to-accent/50">
                     <div className="aspect-video relative">
                       <Image
                         src={`data:image/png;base64,${refImage}`}
@@ -344,7 +438,9 @@ export default function StudioPage() {
                   <label className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-primary/30 bg-primary/5 p-6 text-sm text-muted-foreground transition-colors hover:border-primary hover:bg-primary/10">
                     <Upload className="h-5 w-5" />
                     点击上传参考图
-                    <span className="text-xs">PNG / JPG / WebP，最大 10MB</span>
+                    <span className="text-xs">
+                      PNG / JPG / WebP，最大 10MB
+                    </span>
                     <input
                       ref={fileInputRef}
                       type="file"
@@ -439,7 +535,10 @@ export default function StudioPage() {
             ) : (
               <div className="grid sm:grid-cols-2 gap-4">
                 {images.map((src, i) => (
-                  <article key={`${src}-${i}`} className="overflow-hidden rounded-xl border border-border/70 bg-card/95 shadow-sm">
+                  <article
+                    key={`${src}-${i}`}
+                    className="overflow-hidden rounded-xl border border-border/70 bg-card/95 shadow-sm"
+                  >
                     <div className="relative aspect-square bg-gradient-to-br from-primary/5 via-background to-accent/30">
                       <Image
                         src={src}
@@ -449,15 +548,93 @@ export default function StudioPage() {
                         unoptimized
                       />
                     </div>
-                    <div className="flex items-center justify-between p-3 border-t text-xs text-muted-foreground">
-                      <span>{model} · {size}</span>
-                      <a
-                        href={src}
-                        download={`qianxi-${Date.now()}-${i + 1}.png`}
-                        className="inline-flex items-center gap-1 font-bold text-primary hover:underline"
+                    <div className="space-y-3 p-3 border-t text-xs text-muted-foreground">
+                      <div className="flex items-center justify-between gap-3">
+                        <span>{model} · {size}</span>
+                        <a
+                          href={src}
+                          download={`qianxi-${Date.now()}-${i + 1}.png`}
+                          className="inline-flex items-center gap-1 font-bold text-primary hover:underline"
+                        >
+                          <Download className="h-3.5 w-3.5" />下载
+                        </a>
+                      </div>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="w-full"
+                        onClick={() => saveToLibrary(src)}
                       >
-                        <Download className="h-3.5 w-3.5" />下载
-                      </a>
+                        <BookmarkPlus className="h-4 w-4 mr-2" />
+                        存入作品库
+                      </Button>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div>
+            <div className="flex items-center justify-between mb-3 gap-3">
+              <div className="flex items-center gap-2">
+                <Images className="h-4 w-4" />
+                <h2 className="text-xl font-extrabold">作品库</h2>
+                <Badge variant="secondary">{library.length}</Badge>
+              </div>
+              {library.length > 0 ? (
+                <Button type="button" variant="outline" onClick={clearLibrary}>
+                  <Trash2 className="h-4 w-4 mr-2" />清空作品库
+                </Button>
+              ) : null}
+            </div>
+            {library.length === 0 ? (
+              <div className="flex min-h-[240px] items-center justify-center rounded-xl border border-border/70 bg-card/50 px-6 text-center text-sm text-muted-foreground">
+                作品库还是空的。生成后点击“存入作品库”，刷新页面也不会丢。
+              </div>
+            ) : (
+              <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-4">
+                {library.map((item) => (
+                  <article
+                    key={item.id}
+                    className="overflow-hidden rounded-xl border border-border/70 bg-card/95 shadow-sm"
+                  >
+                    <div className="relative aspect-square bg-gradient-to-br from-primary/5 via-background to-accent/30">
+                      <Image
+                        src={item.image}
+                        alt={item.prompt}
+                        fill
+                        className="object-cover"
+                        unoptimized
+                      />
+                    </div>
+                    <div className="space-y-2 p-3 border-t text-xs text-muted-foreground">
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="font-semibold text-foreground truncate">
+                          {item.model}
+                        </span>
+                        <span>{item.createdAt}</span>
+                      </div>
+                      <p className="line-clamp-2">{item.prompt}</p>
+                      <div className="flex items-center justify-between gap-3">
+                        <span>{item.size}</span>
+                        <div className="flex items-center gap-3">
+                          <a
+                            href={item.image}
+                            download={`qianxi-library-${item.id}.png`}
+                            className="inline-flex items-center gap-1 font-bold text-primary hover:underline"
+                          >
+                            <Download className="h-3.5 w-3.5" />下载
+                          </a>
+                          <button
+                            type="button"
+                            onClick={() => removeLibraryItem(item.id)}
+                            className="inline-flex items-center gap-1 font-bold text-red-600 hover:underline"
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />删除
+                          </button>
+                        </div>
+                      </div>
                     </div>
                   </article>
                 ))}
@@ -489,7 +666,9 @@ export default function StudioPage() {
                   <p className="text-xs text-muted-foreground line-clamp-2 mb-2">
                     {item.description || item.provider}
                   </p>
-                  <span className="text-[10px] text-muted-foreground">{item.provider}</span>
+                  <span className="text-[10px] text-muted-foreground">
+                    {item.provider}
+                  </span>
                 </button>
               ))}
             </div>
@@ -503,7 +682,10 @@ export default function StudioPage() {
               </div>
               <div className="space-y-2 max-h-80 overflow-y-auto pr-1">
                 {sessionHistory.slice(0, 20).map((rec, i) => (
-                  <div key={`${rec.time}-${i}`} className="rounded-lg border border-border/70 bg-card/80 p-3 text-sm shadow-sm">
+                  <div
+                    key={`${rec.time}-${i}`}
+                    className="rounded-lg border border-border/70 bg-card/80 p-3 text-sm shadow-sm"
+                  >
                     <div className="flex items-center gap-2 mb-1">
                       <span
                         className={`inline-flex rounded-full px-2 py-0.5 text-[10px] font-bold ${rec.status === "success" ? "bg-primary text-primary-foreground" : "bg-red-100 text-red-700"}`}
@@ -514,10 +696,14 @@ export default function StudioPage() {
                         {rec.model} · {rec.time}
                       </span>
                       {rec.hasRef ? (
-                        <span className="text-[10px] text-muted-foreground">参考图</span>
+                        <span className="text-[10px] text-muted-foreground">
+                          参考图
+                        </span>
                       ) : null}
                     </div>
-                    <p className="text-xs text-muted-foreground line-clamp-2">{rec.prompt}</p>
+                    <p className="text-xs text-muted-foreground line-clamp-2">
+                      {rec.prompt}
+                    </p>
                     {rec.message ? (
                       <p className="text-xs text-red-500 mt-1">{rec.message}</p>
                     ) : null}

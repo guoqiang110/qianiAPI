@@ -1,0 +1,54 @@
+{
+  "auth": {
+    "title": "输入 API Key",
+    "form": {
+      "confirm_button_loading": "验证中",
+      "input_api_key": "请输入 API Key",
+      "confirm_button": "确认",
+      "remember_key": "记住 API Key"
+    },
+    "description": "请输入您的乾羲 API Key 以开始使用"
+  },
+  "global": {
+    "error": {
+      "unknown_error": "发生未知错误，请联系客服",
+      "not_found": "页面不存在",
+      "copy_failed": "复制失败",
+      "network_error": "网络服务错误，请查看网络状态或稍后再试！"
+    },
+    "footer": {
+      "copyright_content": "由<logo></logo>驱动",
+      "copyright_leading": "内容由AI生成，仅供参考"
+    },
+    "header": {
+      "github_hyperlink": {
+        "label": "GitHub仓库链接"
+      },
+      "language_switcher": {
+        "switch_language": "切换语言"
+      },
+      "theme_switcher": {
+        "dark": "暗色模式",
+        "light": "亮色模式",
+        "system": "跟随系统",
+        "toggle_theme": "切换主题"
+      },
+      "tool_info": {
+        "description": "当前工具相关信息",
+        "title": "关于",
+        "trigger": {
+          "label": "打开/关闭工具信息弹窗"
+        }
+      }
+    }
+  },
+  "translation": {
+    "global": {
+      "header": {
+        "github_hyperlink": {
+          "label": "Github Repo"
+        }
+      }
+    }
+  }
+}

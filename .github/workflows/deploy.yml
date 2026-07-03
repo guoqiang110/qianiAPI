@@ -1,0 +1,59 @@
+name: Deploy to Qianxi API
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build
+        run: npm run build -- --no-lint
+
+      - name: Package .next
+        run: tar -czf qianxi-next-build.tar.gz .next
+
+      - name: Deploy to server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "qianxi-next-build.tar.gz"
+          target: "/opt/"
+
+      - name: Restart Next.js
+        uses: appleboy/ssh-action@v1.2.2
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /opt/qianxi-app
+            fuser -k 4175/tcp 2>/dev/null || true
+            sleep 2
+            rm -rf .next
+            tar -xzf /opt/qianxi-next-build.tar.gz
+            nohup node node_modules/next/dist/bin/next start -p 4175 > /var/log/qianxi-app.log 2>&1 < /dev/null &
+            sleep 3
+            curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:4175/zh

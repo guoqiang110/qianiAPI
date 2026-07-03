@@ -1,0 +1,113 @@
+@import "tailwindcss";
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+@theme {
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-page-background: var(--page-background);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius: 0.5rem;
+}
+
+@layer base {
+  :root {
+    --page-background: 210 40% 98%;
+    --background: 0 0% 100%;
+    --foreground: 222 47% 11%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+    --primary: 213 88% 41%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 32% 95%;
+    --secondary-foreground: 222 47% 18%;
+    --muted: 210 28% 95%;
+    --muted-foreground: 215 16% 42%;
+    --accent: 213 84% 95%;
+    --accent-foreground: 214 92% 30%;
+    --destructive: 0 74% 52%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 213 26% 88%;
+    --input: 213 26% 88%;
+    --ring: 213 88% 41%;
+    --radius: 0.5rem;
+    --chart-1: 213 88% 41%;
+    --chart-2: 165 59% 39%;
+    --chart-3: 39 89% 56%;
+    --chart-4: 267 56% 58%;
+    --chart-5: 4 75% 58%;
+  }
+
+  .dark {
+    --page-background: 221 38% 9%;
+    --background: 221 38% 11%;
+    --foreground: 210 40% 96%;
+    --card: 222 36% 13%;
+    --card-foreground: 210 40% 96%;
+    --popover: 222 36% 13%;
+    --popover-foreground: 210 40% 96%;
+    --primary: 212 93% 62%;
+    --primary-foreground: 222 47% 11%;
+    --secondary: 219 28% 19%;
+    --secondary-foreground: 210 40% 96%;
+    --muted: 219 28% 17%;
+    --muted-foreground: 215 20% 72%;
+    --accent: 216 30% 18%;
+    --accent-foreground: 212 93% 70%;
+    --destructive: 0 68% 46%;
+    --destructive-foreground: 210 40% 96%;
+    --border: 217 22% 24%;
+    --input: 217 22% 24%;
+    --ring: 212 93% 62%;
+    --chart-1: 212 93% 62%;
+    --chart-2: 165 62% 45%;
+    --chart-3: 38 92% 60%;
+    --chart-4: 269 72% 67%;
+    --chart-5: 0 78% 62%;
+  }
+}
+
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--border, currentColor);
+  }
+
+  body {
+    @apply h-fit min-h-screen bg-[hsl(var(--page-background))] text-foreground dark:bg-background;
+  }
+}

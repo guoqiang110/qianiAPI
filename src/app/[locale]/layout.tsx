@@ -53,6 +53,14 @@ export async function generateMetadata(
     title: currentSeo.title,
     description: currentSeo.description,
     metadataBase: new URL(baseUrl),
+    icons: {
+      icon: [
+        { url: "/logo.png", type: "image/png" },
+        { url: "/favicon.ico", sizes: "any" },
+      ],
+      apple: [{ url: "/logo.png", type: "image/png" }],
+      shortcut: ["/logo.png"],
+    },
     alternates: {
       canonical: `/${locale}`,
       languages: languageAlternates,
@@ -123,3 +131,4 @@ export default async function RootLayout({
     </html>
   );
 }
+

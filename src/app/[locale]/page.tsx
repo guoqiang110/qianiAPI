@@ -6,46 +6,77 @@ const categories = [
     name: "语言大模型",
     items: ["OpenAI", "Anthropic", "Gemini", "DeepSeek", "Qwen"],
     href: "/zh/models",
+    tone: {
+      card: "border-sky-200 bg-[linear-gradient(180deg,_rgba(240,249,255,0.96),_rgba(255,255,255,0.98))] hover:border-sky-300 hover:shadow-[0_20px_48px_rgba(59,130,246,0.16)]",
+      chip: "bg-sky-100 text-sky-700",
+      link: "group-hover:text-sky-700",
+    },
   },
   {
     icon: "IMG",
     name: "图片生成",
     items: ["GPT Image", "Seedream", "万相", "CogView", "混元"],
     href: "/zh/models",
+    tone: {
+      card: "border-violet-200 bg-[linear-gradient(180deg,_rgba(245,243,255,0.96),_rgba(255,255,255,0.98))] hover:border-violet-300 hover:shadow-[0_20px_48px_rgba(139,92,246,0.16)]",
+      chip: "bg-violet-100 text-violet-700",
+      link: "group-hover:text-violet-700",
+    },
   },
   {
     icon: "EDIT",
     name: "图片处理",
     items: ["图生图", "背景移除", "放大修复"],
     href: "/zh/image-tools",
+    tone: {
+      card: "border-emerald-200 bg-[linear-gradient(180deg,_rgba(236,253,245,0.96),_rgba(255,255,255,0.98))] hover:border-emerald-300 hover:shadow-[0_20px_48px_rgba(16,185,129,0.14)]",
+      chip: "bg-emerald-100 text-emerald-700",
+      link: "group-hover:text-emerald-700",
+    },
   },
   {
     icon: "VID",
     name: "视频生成",
     items: ["Seedance", "Sora", "即梦", "Luma"],
     href: "/zh/models",
+    tone: {
+      card: "border-amber-200 bg-[linear-gradient(180deg,_rgba(255,251,235,0.96),_rgba(255,255,255,0.98))] hover:border-amber-300 hover:shadow-[0_20px_48px_rgba(245,158,11,0.14)]",
+      chip: "bg-amber-100 text-amber-700",
+      link: "group-hover:text-amber-700",
+    },
   },
   {
     icon: "AUD",
     name: "音频处理",
     items: ["TTS", "ASR", "可灵"],
     href: "/zh/models",
+    tone: {
+      card: "border-rose-200 bg-[linear-gradient(180deg,_rgba(255,241,242,0.96),_rgba(255,255,255,0.98))] hover:border-rose-300 hover:shadow-[0_20px_48px_rgba(244,63,94,0.14)]",
+      chip: "bg-rose-100 text-rose-700",
+      link: "group-hover:text-rose-700",
+    },
   },
   {
     icon: "DOC",
     name: "信息处理",
     items: ["文档解析", "数据分析", "RAG"],
     href: "/zh/models",
+    tone: {
+      card: "border-slate-300 bg-[linear-gradient(180deg,_rgba(248,250,252,0.98),_rgba(255,255,255,0.98))] hover:border-slate-400 hover:shadow-[0_20px_48px_rgba(100,116,139,0.14)]",
+      chip: "bg-slate-100 text-slate-700",
+      link: "group-hover:text-slate-700",
+    },
   },
 ];
 
 const highlights = [
-  { title: "模型广场", desc: "统一浏览模型能力、上游来源与调用方式", href: "/zh/models", badge: "API" },
-  { title: "在线生图", desc: "GPT Image 2、Seedream、万相、混元同屏工作台", href: "/zh/studio", badge: "热门" },
-  { title: "模型定价", desc: "展示价与真实计费价逐步同步，方便销售对外报价", href: "/zh/pricing", badge: "定价" },
-  { title: "图像工具", desc: "图生图、修复、背景移除集中到一个入口", href: "/zh/image-tools", badge: "工具" },
-  { title: "接入文档", desc: "面向 Codex、Claude Code、Cherry Studio 的接入说明", href: "/zh/docs", badge: "文档" },{ title: "SEO 工具", desc: "Prompt 库 · GEO 诊断 · 内容优化工具链", href: "/zh/tools", badge: "SEO" },
-  { title: "控制台", desc: "充值、API Key、用量日志与模型配置后台", href: "/console", badge: "账户" },
+  { title: "模型广场", desc: "统一浏览模型能力、上游来源与调用方式", href: "/zh/models", badge: "API", tone: "border-sky-200 bg-sky-50/80 text-sky-700 hover:border-sky-300 hover:shadow-[0_22px_50px_rgba(37,99,235,0.12)]" },
+  { title: "在线生图", desc: "GPT Image 2、Seedream、万相、混元同屏工作台", href: "/zh/studio", badge: "热门", tone: "border-violet-200 bg-violet-50/80 text-violet-700 hover:border-violet-300 hover:shadow-[0_22px_50px_rgba(124,58,237,0.12)]" },
+  { title: "模型定价", desc: "展示价与真实计费价逐步同步，方便销售对外报价", href: "/zh/pricing", badge: "定价", tone: "border-amber-200 bg-amber-50/80 text-amber-700 hover:border-amber-300 hover:shadow-[0_22px_50px_rgba(217,119,6,0.12)]" },
+  { title: "图像工具", desc: "图生图、修复、背景移除集中到一个入口", href: "/zh/image-tools", badge: "工具", tone: "border-emerald-200 bg-emerald-50/80 text-emerald-700 hover:border-emerald-300 hover:shadow-[0_22px_50px_rgba(5,150,105,0.12)]" },
+  { title: "接入文档", desc: "面向 Codex、Claude Code、Cherry Studio 的接入说明", href: "/zh/docs", badge: "文档", tone: "border-cyan-200 bg-cyan-50/80 text-cyan-700 hover:border-cyan-300 hover:shadow-[0_22px_50px_rgba(8,145,178,0.12)]" },
+  { title: "SEO 工具", desc: "Prompt 库 · GEO 诊断 · 内容优化工具链", href: "/zh/tools", badge: "SEO", tone: "border-rose-200 bg-rose-50/80 text-rose-700 hover:border-rose-300 hover:shadow-[0_22px_50px_rgba(225,29,72,0.12)]" },
+  { title: "控制台", desc: "充值、API Key、用量日志与模型配置后台", href: "/console", badge: "账户", tone: "border-slate-300 bg-slate-50/90 text-slate-700 hover:border-slate-400 hover:shadow-[0_22px_50px_rgba(71,85,105,0.12)]" },
 ];
 
 const stats = [
@@ -162,13 +193,13 @@ export default function Home() {
             <a
               key={cat.name}
               href={cat.href}
-              className="group rounded-2xl border border-slate-200 bg-white p-5 no-underline shadow-[0_14px_36px_rgba(148,163,184,0.10)] transition hover:-translate-y-1 hover:border-sky-300 hover:shadow-[0_20px_48px_rgba(59,130,246,0.14)]"
+              className={`group rounded-2xl border p-5 no-underline shadow-[0_14px_36px_rgba(148,163,184,0.10)] transition hover:-translate-y-1 ${cat.tone.card}`}
             >
               <div className="flex items-center justify-between">
-                <span className="rounded-lg bg-sky-50 px-2.5 py-1 text-xs font-bold text-sky-700">{cat.icon}</span>
+                <span className={`rounded-lg px-2.5 py-1 text-xs font-bold ${cat.tone.chip}`}>{cat.icon}</span>
                 <span className="text-xs text-slate-400">分类入口</span>
               </div>
-              <h3 className="mt-4 text-lg font-bold text-slate-950 group-hover:text-sky-700">{cat.name}</h3>
+              <h3 className={`mt-4 text-lg font-bold text-slate-950 ${cat.tone.link}`}>{cat.name}</h3>
               <p className="mt-2 text-sm leading-6 text-slate-500">{cat.items.join(" · ")}</p>
             </a>
           ))}
@@ -189,12 +220,12 @@ export default function Home() {
               <a
                 key={item.title}
                 href={item.href}
-                className="group rounded-2xl border border-sky-100 bg-white p-5 no-underline shadow-[0_16px_36px_rgba(148,163,184,0.10)] transition hover:border-sky-300 hover:shadow-[0_22px_50px_rgba(37,99,235,0.12)]"
+                className={`group rounded-2xl border bg-white p-5 no-underline shadow-[0_16px_36px_rgba(148,163,184,0.10)] transition hover:-translate-y-0.5 ${item.tone}`}
               >
-                <span className="inline-flex rounded-full bg-sky-50 px-2.5 py-1 text-[11px] font-semibold text-sky-700">
+                <span className="inline-flex rounded-full bg-white/80 px-2.5 py-1 text-[11px] font-semibold">
                   {item.badge}
                 </span>
-                <h3 className="mt-4 text-lg font-bold text-slate-950 group-hover:text-sky-700">{item.title}</h3>
+                <h3 className="mt-4 text-lg font-bold text-slate-950">{item.title}</h3>
                 <p className="mt-2 text-sm leading-6 text-slate-500">{item.desc}</p>
               </a>
             ))}

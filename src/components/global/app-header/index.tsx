@@ -11,7 +11,7 @@ const NAV_LINKS = [
   { href: "/zh/models", label: "模型广场" },
   { href: "/zh/pricing", label: "定价" },
   { href: "/zh/studio", label: "在线生图" },
-  { href: "/zh/docs", label: "文档" },
+  { href: "/zh/docs", label: "文档" },{ href: "/zh/agent", label: "代理商" },
 ];
 
 type HeaderProps = { className?: string };
@@ -53,3 +53,4 @@ const Header = forwardRef<HTMLDivElement, HeaderProps>(({ className }, ref) => {
 Header.displayName = "AppHeader";
 
 export default Header;
+

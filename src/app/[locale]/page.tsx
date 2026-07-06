@@ -76,7 +76,7 @@ const highlights = [
   { title: "图像工具", desc: "图生图、修复、背景移除集中到一个入口", href: "/zh/image-tools", badge: "工具", tone: "border-emerald-200 bg-emerald-50/80 text-emerald-700 hover:border-emerald-300 hover:shadow-[0_22px_50px_rgba(5,150,105,0.12)]" },
   { title: "接入文档", desc: "面向 Codex、Claude Code、Cherry Studio 的接入说明", href: "/zh/docs", badge: "文档", tone: "border-cyan-200 bg-cyan-50/80 text-cyan-700 hover:border-cyan-300 hover:shadow-[0_22px_50px_rgba(8,145,178,0.12)]" },
   { title: "SEO 工具", desc: "Prompt 库 · GEO 诊断 · 内容优化工具链", href: "/zh/tools", badge: "SEO", tone: "border-rose-200 bg-rose-50/80 text-rose-700 hover:border-rose-300 hover:shadow-[0_22px_50px_rgba(225,29,72,0.12)]" },
-  { title: "控制台", desc: "充值、API Key、用量日志与模型配置后台", href: "/console", badge: "账户", tone: "border-slate-300 bg-slate-50/90 text-slate-700 hover:border-slate-400 hover:shadow-[0_22px_50px_rgba(71,85,105,0.12)]" },
+  { title: "代理商", desc: "邀请客户、查看奖励与收益提现", href: "/zh/agent", badge: "代理", tone: "border-indigo-200 bg-indigo-50/80 text-indigo-700 hover:border-indigo-300 hover:shadow-[0_22px_50px_rgba(99,102,241,0.12)]" },{ title: "控制台", desc: "充值、API Key、用量日志与模型配置后台", href: "/console", badge: "账户", tone: "border-slate-300 bg-slate-50/90 text-slate-700 hover:border-slate-400 hover:shadow-[0_22px_50px_rgba(71,85,105,0.12)]" },
 ];
 
 const stats = [
@@ -277,4 +277,5 @@ export default function Home() {
     </div>
   );
 }
+
 

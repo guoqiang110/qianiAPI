@@ -365,7 +365,9 @@ export default function StudioPage() {
   }
 
   return (
-    <div className="flex-1">\n      <section className="border-b border-sky-100 bg-[radial-gradient(circle_at_top_left,_rgba(37,99,235,0.16),_transparent_30%),linear-gradient(180deg,_rgba(255,255,255,0.98),_rgba(239,246,255,0.90))]">\n        <div className="mx-auto max-w-7xl px-4 md:px-6 py-10 lg:py-14">
+    <div className="flex-1">
+      <section className="border-b border-sky-100 bg-[radial-gradient(circle_at_top_left,_rgba(37,99,235,0.16),_transparent_30%),linear-gradient(180deg,_rgba(255,255,255,0.98),_rgba(239,246,255,0.90))]">
+        <div className="mx-auto max-w-7xl px-4 md:px-6 py-10 lg:py-14">
       <div className="max-w-3xl">
         <Badge className="mb-3 border border-sky-200 bg-white/85 text-sky-700 shadow-none">QIANXI API STUDIO · PHASE 2</Badge>
         <h1 className="text-4xl font-extrabold tracking-tight text-slate-950 mb-3 lg:text-5xl">
@@ -376,6 +378,9 @@ export default function StudioPage() {
         </p>
       </div>
 
+    </div>
+  </section>
+  <div className="mx-auto max-w-7xl px-4 md:px-6 py-8">
       <section className="grid lg:grid-cols-[340px_1fr] gap-6">
         <aside className="rounded-[24px] border border-slate-200/80 bg-[linear-gradient(180deg,_rgba(255,255,255,0.98),_rgba(248,250,252,0.98))] p-5 h-fit lg:sticky lg:top-6 space-y-4 shadow-[0_18px_48px_rgba(148,163,184,0.10)]">
           <form onSubmit={handleGenerate} className="space-y-4">
@@ -714,7 +719,9 @@ export default function StudioPage() {
           ) : null}
         </main>
       </section>
+      </div>
     </div>
   );
 }
+
 

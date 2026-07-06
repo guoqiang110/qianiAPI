@@ -365,19 +365,19 @@ export default function StudioPage() {
   }
 
   return (
-    <div className="flex-1 max-w-7xl mx-auto px-4 md:px-6 py-6">
-      <div className="mb-6">
-        <Badge className="mb-3">QIANXI API STUDIO · PHASE 2</Badge>
-        <h1 className="text-3xl font-extrabold tracking-tight mb-2">
+    <div className="flex-1">\n      <section className="border-b border-sky-100 bg-[radial-gradient(circle_at_top_left,_rgba(37,99,235,0.16),_transparent_30%),linear-gradient(180deg,_rgba(255,255,255,0.98),_rgba(239,246,255,0.90))]">\n        <div className="mx-auto max-w-7xl px-4 md:px-6 py-10 lg:py-14">
+      <div className="max-w-3xl">
+        <Badge className="mb-3 border border-sky-200 bg-white/85 text-sky-700 shadow-none">QIANXI API STUDIO · PHASE 2</Badge>
+        <h1 className="text-4xl font-extrabold tracking-tight text-slate-950 mb-3 lg:text-5xl">
           在线生图工作台
         </h1>
-        <p className="text-sm text-muted-foreground max-w-2xl">
+        <p className="text-base leading-8 text-slate-600 max-w-2xl">
           支持 GPT Image 2、Seedream、万相、CogView、混元等模型。国内模型走乾羲适配层，OpenAI 系模型需提供 API Key。
         </p>
       </div>
 
       <section className="grid lg:grid-cols-[340px_1fr] gap-6">
-        <aside className="border rounded-xl p-5 bg-background h-fit lg:sticky lg:top-6 space-y-4">
+        <aside className="rounded-[24px] border border-slate-200/80 bg-[linear-gradient(180deg,_rgba(255,255,255,0.98),_rgba(248,250,252,0.98))] p-5 h-fit lg:sticky lg:top-6 space-y-4 shadow-[0_18px_48px_rgba(148,163,184,0.10)]">
           <form onSubmit={handleGenerate} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="prompt">提示词</Label>
@@ -517,7 +517,7 @@ export default function StudioPage() {
             </Button>
           </form>
 
-          <div className="rounded-lg border border-primary/15 bg-gradient-to-r from-primary/10 via-background to-accent/50 p-3 text-xs text-muted-foreground shadow-sm">
+          <div className="rounded-xl border border-sky-200/70 bg-[linear-gradient(180deg,_rgba(239,246,255,0.95),_rgba(255,255,255,0.98))] p-3 text-xs text-slate-600 shadow-sm">
             {status}
           </div>
         </aside>
@@ -529,7 +529,7 @@ export default function StudioPage() {
               {activeModel && <Badge variant="secondary">{activeModel.name}</Badge>}
             </div>
             {images.length === 0 ? (
-              <div className="flex min-h-[360px] items-center justify-center rounded-xl border border-primary/15 bg-gradient-to-br from-primary/5 via-background to-accent/40 px-6 text-center text-sm text-muted-foreground">
+              <div className="flex min-h-[420px] items-center justify-center rounded-[24px] border border-slate-200/80 bg-[linear-gradient(180deg,_rgba(255,255,255,0.98),_rgba(248,250,252,0.98))] px-6 text-center text-sm text-slate-500 shadow-[0_18px_48px_rgba(148,163,184,0.10)]">
                 还没有图片。输入提示词后点击生成。
               </div>
             ) : (
@@ -717,3 +717,4 @@ export default function StudioPage() {
     </div>
   );
 }
+

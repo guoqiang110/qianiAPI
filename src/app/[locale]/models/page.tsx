@@ -1,7 +1,6 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
-import AppLogo from "@/components/global/app-logo";
 
 // ── Model data ──
 const MODEL_DATA: Record<string, {
@@ -28,7 +27,6 @@ const MODEL_DATA: Record<string, {
   "qwen-max": { name:"通义千问 Max", provider:"阿里云", badge:"可用", summary:"阿里旗舰中文大模型，知识广博。", category:"llm-chat" },
 };
 
-// ── Categories ──
 const CATEGORIES = [
   { id:"image-generation", name:"图片生成", icon:"🖼", toolUrl:"/zh/studio", toolLabel:"在线生图" },
   { id:"image-processing", name:"图片处理", icon:"✂", toolUrl:"/zh/image-tools", toolLabel:"图片处理" },
@@ -36,12 +34,19 @@ const CATEGORIES = [
   { id:"video-generation", name:"视频生成", icon:"🎬", toolUrl:"/zh/models", toolLabel:"规划中" },
 ];
 
-const badgeColor = (s: string) => {
-  if (s.includes("稳定")||s.includes("推荐")) return "bg-emerald-50 text-emerald-700";
-  if (s.includes("MVP")||s.includes("可用")) return "bg-blue-50 text-blue-700";
-  if (s.includes("候选")||s.includes("待")) return "bg-amber-50 text-amber-700";
-  return "bg-secondary text-secondary-foreground";
+const badgeColors: Record<string, string> = {
+  "稳定推荐": "bg-emerald-50 text-emerald-700 ring-emerald-200/50",
+  "稳定可用": "bg-sky-50 text-sky-700 ring-sky-200/50",
+  "推荐": "bg-emerald-50 text-emerald-700 ring-emerald-200/50",
+  "可用": "bg-sky-50 text-sky-700 ring-sky-200/50",
+  "MVP": "bg-blue-50 text-blue-700 ring-blue-200/50",
+  "候选": "bg-amber-50 text-amber-700 ring-amber-200/50",
+  "需 Key": "bg-amber-50 text-amber-700 ring-amber-200/50",
+  "待接入": "bg-slate-100 text-slate-600 ring-slate-200/50",
+  "账号未开通": "bg-slate-100 text-slate-500 ring-slate-200/50",
 };
+
+const getBadge = (b: string) => badgeColors[b] ?? "bg-slate-100 text-slate-600 ring-slate-200/50";
 
 export default function ModelsPage() {
   const [activeCat, setActiveCat] = useState("image-generation");
@@ -53,62 +58,101 @@ export default function ModelsPage() {
   const cat = CATEGORIES.find(c => c.id === activeCat);
 
   return (
-    <div className="flex-1 max-w-7xl mx-auto px-6 py-10">
-      <div className="flex items-center gap-2 mb-2">
-        <span className="px-3 py-0.5 rounded-md bg-primary/10 text-primary text-xs font-extrabold uppercase tracking-wider">QIANXI API MODELS</span>
-      </div>
-      <h1 className="text-4xl font-extrabold tracking-tight mb-2">模型广场</h1>
-      <p className="text-muted-foreground text-lg mb-8">覆盖图片生成、图片处理、语言模型等品类，通过统一 API 网关接入。</p>
+    <div className="flex-1">
+      {/* hero */}
+      <section className="border-b border-sky-100 bg-[radial-gradient(circle_at_top_left,_rgba(37,99,235,0.16),_transparent_30%),linear-gradient(180deg,_rgba(255,255,255,0.98),_rgba(239,246,255,0.90))]">
+        <div className="mx-auto max-w-7xl px-6 py-12 lg:py-16">
+          <div className="max-w-3xl">
+            <span className="inline-flex rounded-full border border-sky-200 bg-white/85 px-3 py-1 text-[11px] font-extrabold uppercase tracking-[0.24em] text-sky-700">
+              QIANXI API MODELS
+            </span>
+            <h1 className="mt-4 text-4xl font-extrabold tracking-tight text-slate-950 lg:text-5xl">
+              模型广场
+            </h1>
+            <p className="mt-3 max-w-2xl text-lg leading-8 text-slate-600">
+              覆盖图片生成、图片处理、语言模型等品类，通过统一 API 网关接入。
+            </p>
+          </div>
+        </div>
+      </section>
 
-      {/* Category tabs */}
-      <div className="flex flex-wrap gap-2 mb-8">
-        {CATEGORIES.map(c => (
-          <button
-            key={c.id}
-            onClick={() => setActiveCat(c.id)}
-            className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-colors ${
-              activeCat === c.id
-                ? "bg-primary text-primary-foreground"
-                : "border border-border/70 bg-background text-muted-foreground hover:border-primary/60 hover:bg-primary/5"
-            }`}
-          >
-            <span>{c.icon}</span>
-            {c.name}
-          </button>
-        ))}
-      </div>
+      <div className="mx-auto max-w-7xl px-6 py-8 space-y-8">
+        {/* category tabs */}
+        <div className="flex flex-wrap gap-3">
+          {CATEGORIES.map(c => (
+            <button
+              key={c.id}
+              onClick={() => setActiveCat(c.id)}
+              className={`inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-bold transition-all ${
+                activeCat === c.id
+                  ? "bg-slate-950 text-white shadow-[0_14px_32px_rgba(15,23,42,0.20)]"
+                  : "border border-slate-200 bg-white text-slate-600 hover:border-sky-200 hover:bg-sky-50 hover:text-slate-950"
+              }`}
+            >
+              <span>{c.icon}</span>
+              {c.name}
+            </button>
+          ))}
+        </div>
 
-      {/* Category info */}
-      {cat && (
-        <div className="flex items-center justify-between mb-6">
-          <p className="text-sm text-muted-foreground">
-            {models.length} 个模型
+        {/* category info bar */}
+        {cat && (
+          <div className="flex flex-col gap-3 rounded-[20px] border border-slate-200/80 bg-[linear-gradient(180deg,_rgba(255,255,255,0.98),_rgba(248,250,252,0.98))] p-5 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="text-[11px] font-extrabold uppercase tracking-[0.24em] text-slate-400">当前分类</p>
+              <div className="mt-1 flex items-center gap-3">
+                <strong className="text-xl text-slate-950">{cat.name}</strong>
+                <span className="rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-semibold text-slate-600">
+                  {models.length} 个模型
+                </span>
+              </div>
+            </div>
             {cat.toolUrl && (
-              <a href={cat.toolUrl} className="ml-3 text-primary font-bold text-sm no-underline hover:underline">
+              <a
+                href={cat.toolUrl}
+                className="inline-flex h-10 items-center rounded-xl bg-slate-950 px-4 text-sm font-bold text-white no-underline transition hover:opacity-90"
+              >
                 {cat.toolLabel} →
               </a>
             )}
-          </p>
-        </div>
-      )}
+          </div>
+        )}
 
-      {/* Model cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {models.map(m => (
-          <div key={m.id} className="rounded-xl border border-border/70 bg-card/90 p-5 flex flex-col gap-3 shadow-sm transition-colors hover:border-primary/60 hover:bg-primary/5">
-            <div className="flex justify-between items-start gap-2">
-              <strong className="text-base">{m.name}</strong>
-              <div className="flex items-center gap-1.5 shrink-0">
-                <span className={`text-[10px] px-2 py-0.5 rounded font-extrabold ${badgeColor(m.badge)}`}>{m.badge}</span>
-                {m.price !== undefined && (
-                  <span className="text-xs font-bold text-primary">¥{m.price.toFixed(2)}/次</span>
-                )}
+        {/* model cards */}
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {models.map(m => (
+            <div
+              key={m.id}
+              className="group flex flex-col gap-4 rounded-[22px] border border-slate-200/80 bg-[linear-gradient(180deg,_rgba(255,255,255,0.98),_rgba(248,250,252,0.98))] p-5 transition-all hover:-translate-y-0.5 hover:border-sky-200 hover:shadow-[0_20px_48px_rgba(59,130,246,0.10)]"
+            >
+              <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-[0.16em] text-slate-400">
+                <span>{m.provider}</span>
+                <span className="h-2.5 w-2.5 rounded-full bg-sky-400/80 shadow-[0_0_0_5px_rgba(125,211,252,0.16)]" />
+              </div>
+
+              <div className="flex items-start justify-between gap-2">
+                <strong className="text-lg leading-7 text-slate-950">{m.name}</strong>
+                <div className="flex items-center gap-1.5 shrink-0">
+                  <span className={`inline-block rounded-full px-2.5 py-0.5 text-[10px] font-extrabold ring-1 ${getBadge(m.badge)}`}>
+                    {m.badge}
+                  </span>
+                  {m.price !== undefined && (
+                    <span className="rounded-full bg-slate-950 px-2.5 py-0.5 text-[10px] font-bold text-white">
+                      ¥{m.price.toFixed(2)}/次
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              <p className="text-sm leading-7 text-slate-600">{m.summary}</p>
+
+              <div className="mt-auto flex items-center justify-between border-t border-slate-100 pt-4 text-[11px] font-semibold">
+                <span className="text-slate-400">统一接入 · 乾羲网关</span>
+                <span className="text-slate-600 transition-colors group-hover:text-sky-700">查看能力</span>
               </div>
             </div>
-            <p className="text-sm text-muted-foreground leading-relaxed">{m.summary}</p>
-            <div className="mt-auto pt-2 border-t text-xs text-muted-foreground">{m.provider}</div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
   );

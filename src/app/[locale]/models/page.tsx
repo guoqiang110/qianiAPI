@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useMemo, useState } from "react";
 import { Loader2, Search } from "lucide-react";
@@ -83,11 +83,13 @@ export default function ModelsPage() {
         {/* 分类 tab + 搜索 */}
         <div className="flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between">
           <div className="flex flex-wrap gap-3">
-            {CATEGORIES.map(c => (
-              <button key={c.id} onClick={() => { setActiveCat(c.id); setSearch(""); }} className={`inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-bold transition-all ${activeCat===c.id?"bg-slate-950 text-white shadow-[0_14px_32px_rgba(15,23,42,0.20)]":"border border-slate-200 bg-white text-slate-600 hover:border-sky-200 hover:bg-sky-50 hover:text-slate-950"}`}>
+            {CATEGORIES.map(c => {
+              const colors: Record<string,string> = {"image-generation":"bg-[linear-gradient(135deg,_#3b82f6,_#8b5cf6)]","image-processing":"bg-[linear-gradient(135deg,_#f59e0b,_#ef4444)]","llm-chat":"bg-[linear-gradient(135deg,_#10b981,_#06b6d4)]"};
+              return (
+              <button key={c.id} onClick={() => { setActiveCat(c.id); setSearch(""); }} className={`inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-bold transition-all ${activeCat===c.id?colors[c.id]+" text-white shadow-[0_14px_32px_rgba(15,23,42,0.20)]":"border border-slate-200 bg-white text-slate-600 hover:border-sky-200 hover:bg-sky-50 hover:text-slate-950"}`}>
                 <span>{c.icon}</span>{c.name}
               </button>
-            ))}
+              )})}
           </div>
           <div className="relative w-full sm:w-64">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />

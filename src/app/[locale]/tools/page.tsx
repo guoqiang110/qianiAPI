@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { ArrowRight, BookOpen, Search, BarChart3, FileText, ExternalLink, Globe, Zap } from "lucide-react";
 
@@ -40,7 +40,7 @@ export default function ToolsPage() {
         {/* 工具卡片 */}
         <div className="grid gap-5 md:grid-cols-3">
           {tools.map((tool) => (
-            <a key={tool.id} href={tool.href} className="group relative overflow-hidden rounded-[20px] border border-slate-200/80 bg-white p-6 no-underline transition hover:-translate-y-1 hover:border-sky-200 hover:shadow-lg hover:shadow-sky-50">
+            <a key={tool.id} href={tool.href} target="_blank" rel="noreferrer" className="group relative overflow-hidden rounded-[20px] border border-slate-200/80 bg-white p-6 no-underline transition hover:-translate-y-1 hover:border-sky-200 hover:shadow-lg hover:shadow-sky-50">
               <div className={`inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r ${tool.color} px-3 py-1 text-[10px] font-extrabold tracking-[0.1em] text-white mb-4`}>
                 <tool.icon className="h-3 w-3" />
                 {tool.badge}

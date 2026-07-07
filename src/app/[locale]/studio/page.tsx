@@ -188,6 +188,14 @@ export default function StudioPage() {
     return library.filter((item) => item.model === libraryFilter);
   }, [library, libraryFilter]);
 
+  function getBadgeClass(badge?: string) {
+    if (!badge) return "bg-slate-100 text-slate-600 border-slate-200";
+    if (/稳定|available/i.test(badge)) return "border-emerald-200 bg-emerald-50 text-emerald-700";
+    if (/mvp/i.test(badge)) return "border-violet-200 bg-violet-50 text-violet-700";
+    if (/未开通|占位|暂不/i.test(badge)) return "border-amber-200 bg-amber-50 text-amber-700";
+    return "border-sky-200 bg-sky-50 text-sky-700";
+  }
+
   useEffect(() => {
     try {
       const stored = window.localStorage.getItem("qianxi_api_key");
@@ -418,12 +426,12 @@ export default function StudioPage() {
 
       <div className="mx-auto max-w-7xl px-4 py-6 md:px-6 lg:py-8">
         <section className="grid gap-6 lg:grid-cols-[380px_minmax(0,1fr)]">
-          <aside className="h-fit space-y-4 rounded-[24px] border border-slate-200/80 bg-[linear-gradient(180deg,_rgba(255,255,255,0.98),_rgba(248,250,252,0.98))] p-5 shadow-[0_18px_48px_rgba(148,163,184,0.10)] lg:sticky lg:top-20">
+          <aside className="h-fit space-y-4 rounded-[28px] border border-white/70 bg-[linear-gradient(160deg,_rgba(255,255,255,0.98),_rgba(224,242,254,0.96)_28%,_rgba(237,233,254,0.96)_62%,_rgba(254,249,195,0.78))] p-5 shadow-[0_28px_70px_rgba(59,130,246,0.16)] lg:sticky lg:top-20">
             <form onSubmit={handleGenerate} className="space-y-4">
               <div className="space-y-2">
                 <div className="flex items-center justify-between gap-3">
-                  <Label>提示词模板</Label>
-                  <div className="inline-flex rounded-full border border-slate-200 bg-white p-1 shadow-sm">
+                  <div className="inline-flex items-center gap-2 rounded-full bg-[linear-gradient(135deg,_rgba(14,165,233,0.14),_rgba(168,85,247,0.12))] px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-sky-700">模板工具</div>
+                  <div className="inline-flex rounded-full border border-white/80 bg-white/70 p-1 shadow-[0_8px_20px_rgba(59,130,246,0.10)] backdrop-blur">
                     <button
                       type="button"
                       onClick={() => setPromptLang("zh")}
@@ -446,7 +454,7 @@ export default function StudioPage() {
                       key={preset.label}
                       type="button"
                       onClick={() => setPrompt(preset.prompt)}
-                      className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-[11px] font-bold text-slate-600 transition hover:border-sky-200 hover:bg-sky-50 hover:text-sky-700"
+                      className="rounded-full border border-white/80 bg-white/85 px-3 py-1.5 text-[11px] font-bold text-slate-600 shadow-sm transition hover:border-sky-300 hover:bg-sky-50 hover:text-sky-700"
                     >
                       <Wand2 className="mr-1 inline-block h-3 w-3" />
                       {preset.label}
@@ -456,22 +464,22 @@ export default function StudioPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="prompt">提示词</Label>
+                <div className="inline-flex items-center gap-2 rounded-full bg-[linear-gradient(135deg,_rgba(59,130,246,0.12),_rgba(245,158,11,0.12))] px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-sky-700">Prompt</div>
                 <Textarea
                   id="prompt"
                   value={prompt}
                   onChange={(e) => setPrompt(e.target.value)}
-                  className="min-h-24 resize-none text-sm"
+                  className="min-h-24 resize-none rounded-2xl border-white/70 bg-white/72 text-sm shadow-[0_10px_24px_rgba(59,130,246,0.08)] backdrop-blur placeholder:text-slate-400 focus-visible:ring-sky-300"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="model">模型</Label>
+                <div className="inline-flex items-center gap-2 rounded-full bg-[linear-gradient(135deg,_rgba(168,85,247,0.12),_rgba(59,130,246,0.12))] px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-violet-700">Model</div>
                 <select
                   id="model"
                   value={model}
                   onChange={(e) => setModel(e.target.value)}
-                  className="h-10 w-full rounded-md border bg-background px-3 text-sm"
+                  className="h-11 w-full rounded-2xl border border-white/70 bg-white/78 px-3 text-sm shadow-[0_10px_24px_rgba(59,130,246,0.08)] backdrop-blur"
                 >
                   {catalog.length === 0 ? (
                     <option value="">加载中...</option>
@@ -528,16 +536,16 @@ export default function StudioPage() {
               )}
 
               <div className="grid grid-cols-2 gap-3">
-                <div className="col-span-2 rounded-xl border border-slate-200/80 bg-slate-50/80 px-3 py-2 text-[11px] text-slate-500">
+                <div className="col-span-2 rounded-2xl border border-white/70 bg-[linear-gradient(135deg,_rgba(255,255,255,0.72),_rgba(254,249,195,0.72),_rgba(219,234,254,0.72))] px-3 py-2 text-[11px] text-slate-700 shadow-[0_10px_24px_rgba(245,158,11,0.10)] backdrop-blur">
                   当前建议：先用 1 张 + standard 出草案，满意后再提高数量或质量。
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="size">尺寸</Label>
+                  <div className="inline-flex items-center gap-2 rounded-full bg-[linear-gradient(135deg,_rgba(59,130,246,0.12),_rgba(45,212,191,0.12))] px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-sky-700">Size</div>
                   <select
                     id="size"
                     value={size}
                     onChange={(e) => setSize(e.target.value)}
-                    className="h-10 w-full rounded-md border bg-background px-3 text-sm"
+                    className="h-11 w-full rounded-2xl border border-white/70 bg-white/78 px-3 text-sm shadow-[0_10px_24px_rgba(59,130,246,0.08)] backdrop-blur"
                   >
                     <option value="1024x1024">1024x1024</option>
                     <option value="1536x1024">1536x1024</option>
@@ -545,12 +553,12 @@ export default function StudioPage() {
                   </select>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="quality">质量</Label>
+                  <div className="inline-flex items-center gap-2 rounded-full bg-[linear-gradient(135deg,_rgba(245,158,11,0.12),_rgba(236,72,153,0.10))] px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-amber-700">Quality</div>
                   <select
                     id="quality"
                     value={quality}
                     onChange={(e) => setQuality(e.target.value)}
-                    className="h-10 w-full rounded-md border bg-background px-3 text-sm"
+                    className="h-11 w-full rounded-2xl border border-white/70 bg-white/78 px-3 text-sm shadow-[0_10px_24px_rgba(59,130,246,0.08)] backdrop-blur"
                   >
                     <option value="standard">standard</option>
                     <option value="high">high</option>
@@ -559,7 +567,7 @@ export default function StudioPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="count">数量</Label>
+                <div className="inline-flex items-center gap-2 rounded-full bg-[linear-gradient(135deg,_rgba(34,197,94,0.12),_rgba(59,130,246,0.10))] px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-emerald-700">Count</div>
                 <Input
                   id="count"
                   type="number"
@@ -572,19 +580,19 @@ export default function StudioPage() {
 
               {!isCnImageModel(model) && (
                 <div className="space-y-2">
-                  <Label htmlFor="apikey">API Key</Label>
+                  <div className="inline-flex items-center gap-2 rounded-full bg-[linear-gradient(135deg,_rgba(168,85,247,0.12),_rgba(245,158,11,0.12))] px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-violet-700">API Key</div>
                   <Input
                     id="apikey"
                     type="password"
                     value={apiKey}
                     onChange={(e) => setApiKey(e.target.value)}
                     placeholder="sk-..."
-                    className="text-sm"
+                    className="rounded-2xl border-white/70 bg-white/78 text-sm shadow-[0_10px_24px_rgba(59,130,246,0.08)] backdrop-blur"
                   />
                 </div>
               )}
 
-              <Button type="submit" className="w-full" disabled={loading || !model}>
+              <Button type="submit" className="w-full rounded-2xl bg-[linear-gradient(135deg,_#3b82f6,_#8b5cf6)] py-5 text-sm font-extrabold text-white shadow-[0_14px_32px_rgba(59,130,246,0.32)] hover:shadow-[0_18px_38px_rgba(59,130,246,0.42)] hover:brightness-110 transition-all" disabled={loading || !model}>
                 {loading ? (
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 ) : (
@@ -594,19 +602,19 @@ export default function StudioPage() {
               </Button>
             </form>
 
-            <div className="rounded-xl border border-sky-200/70 bg-[linear-gradient(180deg,_rgba(239,246,255,0.95),_rgba(255,255,255,0.98))] p-3 text-xs text-slate-600 shadow-sm">
+            <div className="rounded-2xl border border-white/75 bg-[linear-gradient(135deg,_rgba(191,219,254,0.75),_rgba(255,255,255,0.96),_rgba(233,213,255,0.66))] p-3 text-xs text-slate-700 shadow-[0_14px_32px_rgba(59,130,246,0.14)] backdrop-blur">
               {status}
             </div>
           </aside>
 
           <main className="min-w-0 space-y-6">
             <div>
-              <div className="mb-3 flex items-center justify-between">
-                <h2 className="text-xl font-extrabold">图片结果</h2>
+              <div className="mb-3 flex items-center justify-between rounded-[20px] border border-sky-100/70 bg-[linear-gradient(180deg,_rgba(239,246,255,0.8),_rgba(255,255,255,0.96))] px-4 py-2 shadow-[0_8px_20px_rgba(59,130,246,0.06)]">
+                <div className="inline-flex items-center gap-2 rounded-full bg-[linear-gradient(135deg,_rgba(59,130,246,0.12),_rgba(168,85,247,0.12))] px-3 py-1.5 text-sm font-extrabold text-slate-900"><Sparkles className="h-4 w-4 text-sky-600" />图片结果</div>
                 {activeModel && <Badge variant="secondary">{activeModel.name}</Badge>}
               </div>
               {images.length === 0 ? (
-                <div className="flex min-h-[520px] items-center justify-center rounded-[24px] border border-slate-200/80 bg-[linear-gradient(180deg,_rgba(255,255,255,0.98),_rgba(248,250,252,0.98))] px-6 text-center text-sm text-slate-500 shadow-[0_18px_48px_rgba(148,163,184,0.10)]">
+                <div className="flex min-h-[520px] items-center justify-center rounded-[28px] border border-sky-200/70 bg-[linear-gradient(180deg,_rgba(255,255,255,0.98),_rgba(224,242,254,0.78),_rgba(237,233,254,0.68))] px-6 text-center text-sm text-slate-500 shadow-[0_22px_56px_rgba(59,130,246,0.10)]">
                   还没有图片。输入提示词后点击生成。
                 </div>
               ) : (
@@ -614,9 +622,9 @@ export default function StudioPage() {
                   {images.map((src, i) => (
                     <article
                       key={`${src}-${i}`}
-                      className="overflow-hidden rounded-[20px] border border-slate-200/80 bg-white shadow-[0_14px_36px_rgba(148,163,184,0.10)]"
+                      className="overflow-hidden rounded-[24px] border border-sky-200/70 bg-white shadow-[0_18px_42px_rgba(59,130,246,0.10)]"
                     >
-                      <div className="relative aspect-[4/4] bg-[linear-gradient(135deg,_rgba(239,246,255,0.95),_rgba(255,255,255,0.98))]">
+                      <div className="relative aspect-[4/4] bg-[linear-gradient(135deg,_rgba(239,246,255,0.95),_rgba(255,255,255,0.98))]"><div className="absolute inset-x-0 top-0 z-10 h-1 bg-[linear-gradient(90deg,_#3b82f6,_#8b5cf6,_#f59e0b)]" />
                         <button
                           type="button"
                           onClick={() => setZoomImage(src)}
@@ -646,7 +654,7 @@ export default function StudioPage() {
                         <Button
                           type="button"
                           variant="outline"
-                          className="w-full"
+                          className="w-full rounded-xl border-sky-200/70 bg-[linear-gradient(180deg,_rgba(239,246,255,0.9),_rgba(255,255,255,0.96))] py-2.5 text-xs font-bold text-sky-700 shadow-sm hover:bg-sky-50 hover:text-sky-800 transition"
                           onClick={() => saveToLibrary(src)}
                         >
                           <BookmarkPlus className="mr-2 h-4 w-4" />
@@ -660,21 +668,21 @@ export default function StudioPage() {
             </div>
 
             <div>
-              <div className="mb-3 flex items-center justify-between gap-3">
+              <div className="mb-3 flex items-center justify-between gap-3 rounded-[20px] border border-violet-100/70 bg-[linear-gradient(180deg,_rgba(245,243,255,0.8),_rgba(255,255,255,0.96))] px-4 py-2 shadow-[0_8px_20px_rgba(139,92,246,0.06)]">
                 <div className="flex items-center gap-2">
                   <Images className="h-4 w-4" />
-                  <h2 className="text-xl font-extrabold">作品库</h2>
+                  <div className="inline-flex items-center gap-2 rounded-full bg-[linear-gradient(135deg,_rgba(168,85,247,0.12),_rgba(236,72,153,0.10))] px-3 py-1.5 text-sm font-extrabold text-slate-900"><Images className="h-4 w-4 text-violet-600" />作品库</div>
                   <Badge variant="secondary">{library.length}</Badge>
                 </div>
                 {library.length > 0 ? (
                   <Button type="button" variant="outline" onClick={clearLibrary}>
-                    <Trash2 className="mr-2 h-4 w-4" />清空作品库
+                    <Trash2 className="mr-2 h-4 w-4" /><span className="text-[11px] font-bold">清空作品库</span>
                   </Button>
                 ) : null}
               </div>
 
               {library.length > 0 ? (
-                <div className="mb-4 flex items-center justify-between gap-3 rounded-2xl border border-slate-200/80 bg-white/90 px-4 py-3 shadow-[0_10px_24px_rgba(148,163,184,0.08)]">
+                <div className="mb-4 flex items-center justify-between gap-3 rounded-[24px] border border-violet-200/70 bg-[linear-gradient(135deg,_rgba(245,243,255,0.95),_rgba(255,255,255,0.96),_rgba(224,242,254,0.84))] px-4 py-3 shadow-[0_16px_30px_rgba(139,92,246,0.12)]">
                   <div className="text-xs text-slate-500">
                     按模型快速筛选作品，方便复盘不同上游的出图风格。
                   </div>
@@ -683,7 +691,7 @@ export default function StudioPage() {
                     <select
                       value={libraryFilter}
                       onChange={(e) => setLibraryFilter(e.target.value)}
-                      className="h-10 rounded-full border border-slate-200 bg-white px-4 text-sm text-slate-700"
+                      className="h-10 rounded-full border border-violet-200/70 bg-white/90 px-4 text-sm text-slate-700 shadow-sm"
                     >
                       <option value="all">全部模型</option>
                       {libraryModels.map((item) => (
@@ -697,11 +705,11 @@ export default function StudioPage() {
               ) : null}
 
               {library.length === 0 ? (
-                <div className="flex min-h-[260px] items-center justify-center rounded-[20px] border border-slate-200/80 bg-white px-6 text-center text-sm text-slate-500 shadow-[0_14px_36px_rgba(148,163,184,0.08)]">
+                <div className="flex min-h-[260px] items-center justify-center rounded-[24px] border border-sky-200/70 bg-[linear-gradient(180deg,_rgba(255,255,255,0.98),_rgba(224,242,254,0.84),_rgba(237,233,254,0.58))] px-6 text-center text-sm text-slate-500 shadow-[0_18px_42px_rgba(59,130,246,0.08)]">
                   作品库还是空的。生成后点击“存入作品库”，刷新页面也不会丢。
                 </div>
               ) : filteredLibrary.length === 0 ? (
-                <div className="flex min-h-[220px] items-center justify-center rounded-[20px] border border-slate-200/80 bg-white px-6 text-center text-sm text-slate-500 shadow-[0_14px_36px_rgba(148,163,184,0.08)]">
+                <div className="flex min-h-[220px] items-center justify-center rounded-[24px] border border-amber-200/70 bg-[linear-gradient(180deg,_rgba(255,255,255,0.98),_rgba(255,251,235,0.92),_rgba(254,242,242,0.52))] px-6 text-center text-sm text-slate-500 shadow-[0_18px_42px_rgba(245,158,11,0.08)]">
                   当前筛选条件下还没有作品，切换模型筛选试试。
                 </div>
               ) : (
@@ -709,9 +717,9 @@ export default function StudioPage() {
                   {filteredLibrary.map((item) => (
                     <article
                       key={item.id}
-                      className="overflow-hidden rounded-[20px] border border-slate-200/80 bg-white shadow-[0_14px_36px_rgba(148,163,184,0.10)]"
+                      className="overflow-hidden rounded-[24px] border border-sky-200/70 bg-white shadow-[0_18px_42px_rgba(59,130,246,0.10)]"
                     >
-                      <div className="relative aspect-[4/4] bg-[linear-gradient(135deg,_rgba(239,246,255,0.95),_rgba(255,255,255,0.98))]">
+                      <div className="relative aspect-[4/4] bg-[linear-gradient(135deg,_rgba(239,246,255,0.95),_rgba(255,255,255,0.98))]"><div className="absolute inset-x-0 top-0 z-10 h-1 bg-[linear-gradient(90deg,_#3b82f6,_#8b5cf6,_#f59e0b)]" />
                         <button
                           type="button"
                           onClick={() => setZoomImage(item.image)}
@@ -762,7 +770,7 @@ export default function StudioPage() {
             </div>
 
             <div>
-              <h2 className="mb-3 text-xl font-extrabold">图片生成模型目录</h2>
+              <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-[linear-gradient(135deg,_rgba(14,165,233,0.12),_rgba(245,158,11,0.12))] px-3 py-1.5 text-sm font-extrabold text-slate-900"><Sparkles className="h-4 w-4 text-sky-600" />图片生成模型目录</div>
               <div className="space-y-5">
                 {[
                   {
@@ -770,22 +778,26 @@ export default function StudioPage() {
                     title: "国产模型",
                     desc: "乾羲适配层直连，适合中文商业图与快速交付。",
                     items: groupedCatalog.domestic,
+                    panelClass:
+                      "border-sky-200/70 bg-[linear-gradient(180deg,_rgba(255,255,255,0.99),_rgba(224,242,254,0.72),_rgba(237,233,254,0.46))] shadow-[0_18px_34px_rgba(59,130,246,0.10)]",
                   },
                   {
                     key: "openai",
                     title: "OpenAI / Google",
                     desc: "需要上游 API Key，适合高质量创意与通用视觉生成。",
                     items: groupedCatalog.openai,
+                    panelClass:
+                      "border-amber-200/70 bg-[linear-gradient(180deg,_rgba(255,255,255,0.99),_rgba(255,251,235,0.86),_rgba(254,242,242,0.42))] shadow-[0_18px_34px_rgba(245,158,11,0.10)]",
                   },
                 ]
                   .filter((group) => group.items.length > 0)
                   .map((group) => (
                     <div
                       key={group.key}
-                      className="rounded-[20px] border border-slate-200/80 bg-white p-4 shadow-[0_12px_28px_rgba(148,163,184,0.08)]"
+                      className={`rounded-[24px] border p-4 ${group.panelClass}`}
                     >
                       <div className="mb-3">
-                        <h3 className="text-sm font-extrabold text-slate-950">{group.title}</h3>
+                        <div className="flex items-center justify-between gap-3"><h3 className="text-sm font-extrabold text-slate-950">{group.title}</h3><span className={`rounded-full px-2.5 py-1 text-[10px] font-bold ${group.key === "domestic" ? "bg-sky-100 text-sky-700" : "bg-amber-100 text-amber-700"}`}>{group.key === "domestic" ? "CN MODELS" : "GLOBAL MODELS"}</span></div>
                         <p className="mt-1 text-xs text-slate-500">{group.desc}</p>
                       </div>
                       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-2">
@@ -794,14 +806,18 @@ export default function StudioPage() {
                             key={item.id}
                             type="button"
                             onClick={() => setModel(item.id)}
-                            className={`rounded-xl border p-4 text-left transition-colors ${item.id === model ? "border-primary bg-primary/10 ring-1 ring-primary/20 shadow-sm" : "border-border/70 bg-card/90 hover:border-primary/60 hover:bg-primary/5"}`}
+                            className={
+                              item.id === model
+                                ? "rounded-[20px] border border-sky-400 bg-[linear-gradient(135deg,_rgba(191,219,254,0.95),_rgba(255,255,255,0.98),_rgba(233,213,255,0.76),_rgba(254,249,195,0.70))] p-4 text-left ring-1 ring-sky-200 shadow-[0_16px_32px_rgba(59,130,246,0.14)] transition-colors"
+                                : "rounded-[20px] border border-slate-200/80 bg-[linear-gradient(180deg,_rgba(255,255,255,0.98),_rgba(248,250,252,0.96))] p-4 text-left transition-colors hover:border-sky-300 hover:bg-[linear-gradient(180deg,_rgba(240,249,255,0.95),_rgba(255,255,255,0.98))]"
+                            }
                           >
                             <div className="mb-2 flex items-start justify-between gap-2">
-                              <strong className="text-sm">{item.name}</strong>
+                              <strong className="rounded-2xl border-white/70 bg-white/78 text-sm shadow-[0_10px_24px_rgba(59,130,246,0.08)] backdrop-blur">{item.name}</strong>
                               {item.badge ? (
                                 <Badge
                                   variant={item.id === model ? "default" : "secondary"}
-                                  className={`text-[10px] ${item.id === model ? "" : "bg-secondary text-secondary-foreground"}`}
+                                  className={`border text-[10px] ${item.id === model ? "border-white/70 bg-white/85 text-slate-700" : getBadgeClass(item.badge)}` }
                                 >
                                   {item.badge}
                                 </Badge>
@@ -823,7 +839,7 @@ export default function StudioPage() {
               <div>
                 <div className="mb-3 flex items-center gap-2">
                   <Clock className="h-4 w-4" />
-                  <h2 className="text-lg font-extrabold">本次会话记录</h2>
+                  <div className="inline-flex items-center gap-2 rounded-full bg-[linear-gradient(135deg,_rgba(14,165,233,0.12),_rgba(34,197,94,0.12))] px-3 py-1.5 text-sm font-extrabold text-slate-900"><Clock className="h-4 w-4 text-emerald-600" />本次会话记录</div>
                 </div>
                 <div className="max-h-80 space-y-2 overflow-y-auto pr-1">
                   {sessionHistory.slice(0, 20).map((rec, i) => (
@@ -895,3 +911,11 @@ export default function StudioPage() {
     </div>
   );
 }
+
+
+
+
+
+
+
+

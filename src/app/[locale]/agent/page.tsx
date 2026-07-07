@@ -109,6 +109,12 @@ export default function AgentPage() {
   const affHistory = Number(user?.aff_history || 0);
   const total = customers.reduce((s, c) => s + Number(c.used_quota || 0), 0);
 
+  const statCardColors = [
+    "border-violet-200/70 bg-[linear-gradient(180deg,_rgba(245,243,255,0.96),_rgba(255,255,255,0.98))]",
+    "border-emerald-200/70 bg-[linear-gradient(180deg,_rgba(236,253,245,0.96),_rgba(255,255,255,0.98))]",
+    "border-amber-200/70 bg-[linear-gradient(180deg,_rgba(255,251,235,0.96),_rgba(255,255,255,0.98))]",
+    "border-sky-200/70 bg-[linear-gradient(180deg,_rgba(240,249,255,0.96),_rgba(255,255,255,0.98))]",
+  ];
   const statCards = [
     { label: "邀请人数", value: affCount, icon: Users },
     { label: "可提余额", value: `¥${yuan(affQuota)}`, icon: Wallet },
@@ -132,8 +138,8 @@ export default function AgentPage() {
       <div className="mx-auto max-w-7xl space-y-8 bg-[linear-gradient(180deg,_rgba(248,250,252,0.98),_rgba(239,246,255,0.68))] px-6 py-8">
         {/* stat cards */}
         <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-          {statCards.map(s => (
-            <div key={s.label} className="rounded-[20px] border border-sky-200/70 bg-[linear-gradient(180deg,_rgba(239,246,255,0.96),_rgba(255,255,255,0.98))] p-5 shadow-[0_12px_28px_rgba(59,130,246,0.06)]">
+          {statCards.map((s, idx) => (
+            <div key={s.label} className={`rounded-[20px] border p-5 shadow-[0_12px_28px_rgba(15,23,42,0.04)] ${statCardColors[idx] || statCardColors[3]}`}>
               <div className="flex items-center gap-2 text-slate-400 mb-2">
                 <s.icon className="h-4 w-4" />
                 <span className="text-[11px] font-extrabold uppercase tracking-[0.16em]">{s.label}</span>
@@ -253,7 +259,7 @@ export default function AgentPage() {
                       }>
                         {item.status === "approved" ? "已通过" : item.status === "rejected" ? "已拒绝" : "审核中"}
                       </span>
-                      <span className="text-xs text-slate-400">{String(item.created_at || "")}</span>
+                      <span className="text-xs text-slate-400">{item.created_at ? new Date(Number(item.created_at) * 1000).toLocaleDateString("zh-CN") : ""}</span>
                     </div>
                   ))}
                 </div>

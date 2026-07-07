@@ -1,13 +1,24 @@
 "use client";
 
-import { BookOpen, Key, Image, Code, Terminal, Monitor, HelpCircle } from "lucide-react";
+import { BookOpen, Key, Image, Code, Terminal, Monitor, HelpCircle, ExternalLink } from "lucide-react";
+
+const sectionColors = [
+  "border-l-sky-400 bg-[linear-gradient(180deg,_rgba(240,249,255,0.9),_rgba(255,255,255,0.98))]",
+  "border-l-amber-400 bg-[linear-gradient(180deg,_rgba(255,251,235,0.9),_rgba(255,255,255,0.98))]",
+  "border-l-violet-400 bg-[linear-gradient(180deg,_rgba(245,243,255,0.9),_rgba(255,255,255,0.98))]",
+  "border-l-emerald-400 bg-[linear-gradient(180deg,_rgba(236,253,245,0.9),_rgba(255,255,255,0.98))]",
+  "border-l-sky-400 bg-[linear-gradient(180deg,_rgba(240,249,255,0.9),_rgba(255,255,255,0.98))]",
+  "border-l-amber-400 bg-[linear-gradient(180deg,_rgba(255,251,235,0.9),_rgba(255,255,255,0.98))]",
+  "border-l-violet-400 bg-[linear-gradient(180deg,_rgba(245,243,255,0.9),_rgba(255,255,255,0.98))]",
+  "border-l-emerald-400 bg-[linear-gradient(180deg,_rgba(236,253,245,0.9),_rgba(255,255,255,0.98))]",
+];
 
 const sections = [
   {
     icon: BookOpen, title: "注册与充值",
     content: (
       <ol className="list-decimal space-y-2 pl-5 text-sm leading-7 text-slate-600">
-        <li>访问 <a href="https://qianxi-api.com/console" className="font-bold text-sky-700 hover:underline">控制台</a> 注册账号</li>
+        <li>访问 <a href="/zh/console" className="font-bold text-sky-700 hover:underline">控制台</a> 注册账号</li>
         <li>邮箱验证后登录</li>
         <li>在「API Keys」页面创建密钥，格式为 <code className="rounded-md bg-slate-100 px-1.5 py-0.5 text-xs font-semibold text-slate-800">sk-...</code></li>
         <li>支付宝充值，按量计费</li>
@@ -106,30 +117,52 @@ ANTHROPIC_AUTH_TOKEN=sk-...`}</code>
 export default function Page() {
   return (
     <div className="flex-1">
-      <section className="border-b border-sky-100 bg-[radial-gradient(circle_at_top_left,_rgba(37,99,235,0.14),_transparent_30%),linear-gradient(180deg,_rgba(255,255,255,0.98),_rgba(239,246,255,0.90))]">
-        <div className="mx-auto max-w-5xl px-6 py-14 lg:py-18">
+      <section className="border-b border-sky-100 bg-[radial-gradient(circle_at_top_left,_rgba(37,99,235,0.16),_transparent_30%),linear-gradient(180deg,_rgba(255,255,255,0.98),_rgba(239,246,255,0.90))]">
+        <div className="mx-auto max-w-7xl px-6 py-14 lg:py-18">
           <div className="flex items-center gap-3 mb-3">
             <BookOpen className="h-5 w-5 text-sky-600" />
             <span className="inline-flex rounded-full border border-sky-200 bg-white/85 px-3 py-1 text-[11px] font-extrabold uppercase tracking-[0.24em] text-sky-700">DOCS</span>
           </div>
           <h1 className="text-4xl font-extrabold tracking-tight text-slate-950 lg:text-5xl">接入文档</h1>
-          <p className="mt-3 max-w-2xl text-lg leading-8 text-slate-600">Codex · Claude Code · Cherry Studio · OpenAI 兼容客户端</p>
+          <p className="mt-3 max-w-2xl text-lg leading-8 text-slate-600">
+            Codex · Claude Code · Cherry Studio · OpenAI 兼容客户端
+          </p>
         </div>
       </section>
 
-      <div className="mx-auto max-w-5xl px-6 py-10 space-y-5">
-        {sections.map(s => (
-          <section key={s.title} className="rounded-[22px] border border-slate-200/80 bg-white p-6">
-            <div className="flex items-center gap-3 mb-4">
-              <s.icon className="h-5 w-5 text-sky-600" />
-              <h2 className="text-lg font-extrabold text-slate-950">{s.title}</h2>
-            </div>
-            {s.content}
-          </section>
-        ))}
-        <p className="text-center text-sm text-slate-400 pt-6">客服：qianxiapi@163.com</p>
+      <div className="mx-auto max-w-7xl px-6 py-10 bg-[linear-gradient(180deg,_rgba(248,250,252,0.98),_rgba(239,246,255,0.68))]">
+        {/* quick links */}
+        <div className="flex flex-wrap gap-2 mb-8">
+          {["注册与充值","API Key 使用","图片生成","LLM 兼容","Codex","Claude Code","Cherry Studio","常见问题"].map((name, i) => (
+            <a key={name} href={`#sec-${i}`} className="inline-flex items-center rounded-full border border-slate-200 bg-white px-3 py-1.5 text-[11px] font-bold text-slate-500 transition hover:border-sky-200 hover:text-sky-700 hover:bg-sky-50 no-underline">
+              {name}
+            </a>
+          ))}
+        </div>
+
+        <div className="max-w-4xl space-y-5">
+          {sections.map((s, i) => (
+            <section key={s.title} id={`sec-${i}`} className={`rounded-[22px] border border-slate-200/80 border-l-4 p-6 ${sectionColors[i]} transition-all hover:shadow-[0_12px_32px_rgba(59,130,246,0.06)]`}>
+              <div className="flex items-center gap-3 mb-4">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/80">
+                  <s.icon className="h-5 w-5 text-slate-700" />
+                </div>
+                <h2 className="text-lg font-extrabold text-slate-950">{s.title}</h2>
+                <a href={`#sec-${i}`} className="ml-auto text-slate-300 hover:text-sky-500 transition">
+                  <ExternalLink className="h-3.5 w-3.5" />
+                </a>
+              </div>
+              {s.content}
+            </section>
+          ))}
+        </div>
+
+        {/* bottom CTA */}
+        <div className="max-w-4xl mt-10 rounded-[22px] border border-sky-200/80 bg-[linear-gradient(135deg,_rgba(239,246,255,0.95),_rgba(255,255,255,0.98))] p-8 text-center">
+          <p className="text-sm text-slate-500 mb-1">客服邮箱</p>
+          <a href="mailto:qianxiapi@163.com" className="text-base font-extrabold text-sky-700 hover:underline">qianxiapi@163.com</a>
+        </div>
       </div>
     </div>
   );
 }
-

@@ -79,10 +79,10 @@ export default function ModelsPage() {
         </div>
       </section>
 
-      <div className="mx-auto max-w-7xl px-6 py-8 space-y-6">
+      <div className="mx-auto max-w-7xl space-y-6 bg-[linear-gradient(180deg,_rgba(248,250,252,0.98),_rgba(239,246,255,0.72))] px-6 py-8">
         {/* 分类 tab + 搜索 */}
         <div className="flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between">
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-wrap gap-3 rounded-[24px] border border-sky-100/70 bg-[linear-gradient(180deg,_rgba(239,246,255,0.82),_rgba(255,255,255,0.96))] p-4 shadow-[0_10px_24px_rgba(59,130,246,0.06)]">
             {CATEGORIES.map(c => {
               const colors: Record<string,string> = {"image-generation":"bg-[linear-gradient(135deg,_#3b82f6,_#8b5cf6)]","image-processing":"bg-[linear-gradient(135deg,_#f59e0b,_#ef4444)]","llm-chat":"bg-[linear-gradient(135deg,_#10b981,_#06b6d4)]"};
               return (
@@ -116,7 +116,7 @@ export default function ModelsPage() {
         )}
 
         {models.length === 0 ? (
-          <div className="text-center py-16 text-slate-400">
+          <div className="rounded-[24px] border border-sky-100/70 bg-[linear-gradient(180deg,_rgba(255,255,255,0.96),_rgba(239,246,255,0.78))] py-16 text-center text-slate-400 shadow-[0_10px_24px_rgba(59,130,246,0.06)]">
             <Search className="h-8 w-8 mx-auto mb-3 opacity-50" />
             <p className="text-sm">没有匹配的模型</p>
           </div>

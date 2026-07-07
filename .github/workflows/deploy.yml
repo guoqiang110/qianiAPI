@@ -1,4 +1,4 @@
-name: Deploy to Qianxi API
+﻿name: Deploy to Qianxi API
 
 on:
   push:
@@ -42,7 +42,7 @@ jobs:
         run: npm run build -- --no-lint
 
       - name: Package .next
-        run: tar -czf qianxi-next-build.tar.gz .next
+        run: tar -czf qianxi-next-build.tar.gz .next public/tools
 
       - name: Deploy to server
         uses: appleboy/scp-action@v0.1.7

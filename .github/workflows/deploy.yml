@@ -53,18 +53,24 @@ jobs:
           source: "qianxi-next-build.tar.gz"
           target: "/opt/"
 
-      - name: Restart Next.js
+      - name: Restart via systemd
         uses: appleboy/ssh-action@v1.2.2
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
+            set -e
             cd /opt/qianxi-app
+            systemctl stop qianxi-app 2>/dev/null || true
             fuser -k 4175/tcp 2>/dev/null || true
             sleep 2
             rm -rf .next
             tar -xzf /opt/qianxi-next-build.tar.gz
-            nohup node node_modules/next/dist/bin/next start -p 4175 > /var/log/qianxi-app.log 2>&1 < /dev/null &
-            sleep 3
-            curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:4175/zh
+            systemctl start qianxi-app
+            sleep 4
+            HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:4175/zh || echo "000")
+            echo "HTTP status: $HTTP_CODE"
+            if [ "$HTTP_CODE" != "200" ] && [ "$HTTP_CODE" != "307" ]; then
+              echo "WARN: unexpected status $HTTP_CODE"
+            fi

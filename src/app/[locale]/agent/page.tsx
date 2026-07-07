@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
@@ -129,11 +129,11 @@ export default function AgentPage() {
         </div>
       </section>
 
-      <div className="mx-auto max-w-7xl px-6 py-8 space-y-8">
+      <div className="mx-auto max-w-7xl space-y-8 bg-[linear-gradient(180deg,_rgba(248,250,252,0.98),_rgba(239,246,255,0.68))] px-6 py-8">
         {/* stat cards */}
         <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
           {statCards.map(s => (
-            <div key={s.label} className="rounded-[20px] border border-slate-200/80 bg-[linear-gradient(180deg,_rgba(255,255,255,0.98),_rgba(248,250,252,0.98))] p-5">
+            <div key={s.label} className="rounded-[20px] border border-sky-200/70 bg-[linear-gradient(180deg,_rgba(239,246,255,0.96),_rgba(255,255,255,0.98))] p-5 shadow-[0_12px_28px_rgba(59,130,246,0.06)]">
               <div className="flex items-center gap-2 text-slate-400 mb-2">
                 <s.icon className="h-4 w-4" />
                 <span className="text-[11px] font-extrabold uppercase tracking-[0.16em]">{s.label}</span>

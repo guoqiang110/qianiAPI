@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useCallback, useEffect, useState } from "react";
 import { Loader2, CheckCircle2, XCircle, RefreshCw, Save, Database, History, ToggleLeft, ToggleRight } from "lucide-react";
@@ -105,7 +105,7 @@ export default function ModelAdminPage() {
         </div>
       </section>
 
-      <div className="mx-auto max-w-7xl px-6 py-8 space-y-8">
+      <div className="mx-auto max-w-7xl space-y-8 bg-[linear-gradient(180deg,_rgba(248,250,252,0.98),_rgba(239,246,255,0.68))] px-6 py-8">
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           {[{label:"New-API 模型",v:newApiModels.length},{label:"上游通道",v:channels.length},{label:"展示模型",v:cnConfig?.models?.length??0},{label:"备份数量",v:backups.length}].map((c,i)=><div key={i} className="rounded-[20px] border border-slate-200/80 bg-white p-4"><p className="text-[10px] font-extrabold uppercase tracking-[0.14em] text-slate-400">{c.label}</p><p className="mt-2 text-2xl font-extrabold text-slate-950">{c.v}</p></div>)}
         </div>

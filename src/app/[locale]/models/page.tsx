@@ -1,10 +1,11 @@
 ﻿"use client";
 
-import { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Loader2, Search } from "lucide-react";
 
 type CnImageModel = { id: string; name: string; provider: string; badge: string; price?: number; enabled: boolean; description?: string };
 type CnImageConfig = { version: number; updatedAt: string; models: CnImageModel[] };
+type BillingPrice = { model: string; price: number; ts: string };
 
 const LLM_MODELS: Record<string, { name: string; provider: string; badge: string; summary: string; category: string }> = {
   "gpt-5.5": { name:"GPT-5.5", provider:"OpenAI", badge:"推荐", summary:"OpenAI 最新旗舰，强推理、多模态、长上下文。", category:"llm-chat" },
@@ -34,6 +35,10 @@ type ModelCard = { id: string; name: string; provider: string; badge: string; su
 export default function ModelsPage() {
   const [activeCat, setActiveCat] = useState("image-generation");
   const [cnModels, setCnModels] = useState<CnImageModel[]>([]);
+  const [billingPrices, setBillingPrices] = useState<BillingPrice[]>([]);
+
+  const getBillingPrice = (mid: string) => billingPrices.find(p => p.model === mid)?.price;
+  const getSyncBadge2 = (mid: string, dp?: number) => { if (dp===undefined) return null; const r = getBillingPrice(mid); if (r===undefined) return null; const ok = Math.abs(r-dp)<0.01; return ok ? React.createElement("span",{className:"inline-flex items-center gap-1 rounded-full bg-emerald-50 px-1.5 py-0.5 text-[9px] font-extrabold text-emerald-700 ring-1 ring-emerald-200/50 ml-1"},"已同步") : React.createElement("span",{className:"inline-flex items-center gap-1 rounded-full bg-amber-50 px-1.5 py-0.5 text-[9px] font-extrabold text-amber-700 ring-1 ring-amber-200/50 ml-1"},"待更新 "+"¥"+r.toFixed(2)); };
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
 
@@ -41,6 +46,7 @@ export default function ModelsPage() {
     (async () => {
       try {
         const res = await fetch("/api/cn-image/model-config").then(r => r.json());
+        fetch("/api/cn-image/billing-prices").then(r => r.ok ? r.json() : null).then(d => { if (d && d.prices) setBillingPrices(d.prices); }).catch(() => {});
         setCnModels((res?.models || []).filter((m: CnImageModel) => m.enabled));
       } catch {}
       setLoading(false);
@@ -132,7 +138,7 @@ export default function ModelsPage() {
                   <strong className="text-lg leading-7 text-slate-950">{m.name}</strong>
                   <div className="flex items-center gap-1.5 shrink-0">
                     <span className={`inline-block rounded-full px-2.5 py-0.5 text-[10px] font-extrabold ring-1 ${getBadge(m.badge)}`}>{m.badge}</span>
-                    {m.price !== undefined && <span className="rounded-full bg-slate-950 px-2.5 py-0.5 text-[10px] font-bold text-white">¥{m.price.toFixed(2)}/次</span>}
+                    {m.price !== undefined && <><span className="rounded-full bg-slate-950 px-2.5 py-0.5 text-[10px] font-bold text-white">¥{m.price.toFixed(2)}/次</span>{getSyncBadge2(m.id, m.price)}</>}
                   </div>
                 </div>
                 <p className="text-sm leading-7 text-slate-600">{m.summary}</p>

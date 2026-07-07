@@ -1,6 +1,6 @@
 ﻿"use client";
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 
@@ -21,6 +21,7 @@ const STATIC_MODELS: ModelItem[] = [
   { id: "midjourney", name: "Midjourney", provider: "Midjourney", badge: "待接入", price: 0.80, category: "image-generation", description: "风格化海报、概念设计、空间氛围。需 Midjourney API。" },
 ];
 
+interface BillingPrice { model: string; price: number; ts: string; }
 interface ModelItem {
   id: string; name: string; provider: string; badge: string;
   price?: number; category: string; description?: string;
@@ -40,7 +41,9 @@ const badgeColors: Record<string, string> = {
 
 const getBadge = (b: string) => badgeColors[b] ?? "bg-slate-100 text-slate-600 ring-slate-200/50";
 
-function PriceTierCard({ models, title, desc, accent }: { models: ModelItem[]; title: string; desc: string; accent: string }) {
+function getBillingPrice(bp: BillingPrice[], mid: string) { return bp.find(p => p.model === mid)?.price; }
+function getSyncBadge(bp: BillingPrice[], mid: string, dp?: number) { if (dp===undefined) return null; const r = getBillingPrice(bp,mid); if (r===undefined) return null; if (Math.abs(r-dp)<0.01) return React.createElement("span",{className:"inline-flex items-center gap-1 rounded-full bg-emerald-50 px-1.5 py-0.5 text-[9px] font-extrabold text-emerald-700 ring-1 ring-emerald-200/50 ml-1"},"已同步"); return React.createElement("span",{className:"inline-flex items-center gap-1 rounded-full bg-amber-50 px-1.5 py-0.5 text-[9px] font-extrabold text-amber-700 ring-1 ring-amber-200/50 ml-1"},"待更新 "+"¥"+r.toFixed(2)); }
+function PriceTierCard({ models, title, desc, accent, billingPrices }: { models: ModelItem[]; title: string; desc: string; accent: string; billingPrices: BillingPrice[] }) {
   if (!models.length) return null;
   return (
     <div className={`rounded-[22px] border p-5 ${accent}`}>
@@ -53,7 +56,7 @@ function PriceTierCard({ models, title, desc, accent }: { models: ModelItem[]; t
               <span className="text-sm font-semibold text-slate-900">{m.name}</span>
               <span className={`inline-block rounded-full px-2 py-0.5 text-[10px] font-extrabold ring-1 ${getBadge(m.badge)}`}>{m.badge}</span>
             </div>
-            <span className="text-sm font-extrabold text-slate-950">¥{m.price?.toFixed(2) ?? "—"}/次</span>
+            <span className="text-sm font-extrabold text-slate-950">¥{m.price?.toFixed(2) ?? "—"}{"/次"}</span>{getSyncBadge(billingPrices, m.id, m.price)}
           </div>
         ))}
       </div>
@@ -64,10 +67,12 @@ function PriceTierCard({ models, title, desc, accent }: { models: ModelItem[]; t
 export default function PricingPage() {
   const params = useParams();
   const [models, setModels] = useState<ModelItem[]>(STATIC_MODELS);
+  const [billingPrices, setBillingPrices] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let cancelled = false;
+    fetch("/api/cn-image/billing-prices").then(r=>r.ok?r.json():null).then(d=>{if(d&&d.prices)setBillingPrices(d.prices)}).catch(()=>{});
     fetch("/api/cn-image/model-config")
       .then(r => r.ok ? r.json() : null)
       .then(cfg => { if (!cancelled && cfg?.models?.length) setModels(cfg.models); })
@@ -115,9 +120,9 @@ export default function PricingPage() {
       <div className="mx-auto max-w-7xl px-6 py-10 space-y-10">
         {/* tier cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-          <PriceTierCard models={cheap} title="经济型" desc="适合大量试错、草案和批量生成" accent="border-slate-200/80 bg-[linear-gradient(180deg,_rgba(248,250,252,0.98),_rgba(255,255,255,0.98))]" />
-          <PriceTierCard models={mid} title="均衡型" desc="日常使用，质量与价格兼顾" accent="border-sky-200/80 bg-[linear-gradient(180deg,_rgba(240,249,255,0.96),_rgba(255,255,255,0.98))]" />
-          <PriceTierCard models={high} title="高质量型" desc="商业定稿、品牌海报和成品输出" accent="border-violet-200/80 bg-[linear-gradient(180deg,_rgba(245,243,255,0.96),_rgba(255,255,255,0.98))]" />
+          <PriceTierCard models={cheap} billingPrices={billingPrices} title="经济型" desc="适合大量试错、草案和批量生成" accent="border-slate-200/80 bg-[linear-gradient(180deg,_rgba(248,250,252,0.98),_rgba(255,255,255,0.98))]" />
+          <PriceTierCard models={mid} billingPrices={billingPrices} title="均衡型" desc="日常使用，质量与价格兼顾" accent="border-sky-200/80 bg-[linear-gradient(180deg,_rgba(240,249,255,0.96),_rgba(255,255,255,0.98))]" />
+          <PriceTierCard models={high} billingPrices={billingPrices} title="高质量型" desc="商业定稿、品牌海报和成品输出" accent="border-violet-200/80 bg-[linear-gradient(180deg,_rgba(245,243,255,0.96),_rgba(255,255,255,0.98))]" />
         </div>
 
         {/* full price table */}
@@ -125,15 +130,16 @@ export default function PricingPage() {
           <div>
             <h2 className="text-xl font-extrabold text-slate-950 mb-4">全部已定价模型</h2>
             <div className="overflow-hidden rounded-[20px] border border-slate-200/80 bg-white">
-              <div className="hidden md:grid grid-cols-5 gap-3 bg-slate-50 px-5 py-3 text-[11px] font-extrabold uppercase tracking-[0.16em] text-slate-400">
-                <div>模型</div><div>供应商</div><div>状态</div><div>单价</div><div>说明</div>
+              <div className="hidden md:grid grid-cols-6 gap-3 bg-slate-50 px-5 py-3 text-[11px] font-extrabold uppercase tracking-[0.16em] text-slate-400">
+                <div>模型</div><div>供应商</div><div>状态</div><div>单价</div><div>同步</div><div>说明</div>
               </div>
               {priced.map(m => (
-                <div key={m.id} className="grid grid-cols-1 gap-2 md:grid-cols-5 md:gap-3 px-5 py-3.5 text-sm border-t border-slate-100 items-start md:items-center">
+                <div key={m.id} className="grid grid-cols-1 gap-2 md:grid-cols-6 md:gap-3 px-5 py-3.5 text-sm border-t border-slate-100 items-start md:items-center">
                   <div className="font-extrabold text-slate-950">{m.name}</div>
                   <div className="text-slate-500">{m.provider}</div>
                   <div><span className={`inline-block rounded-full px-2.5 py-0.5 text-[10px] font-extrabold ring-1 ${getBadge(m.badge)}`}>{m.badge}</span></div>
-                  <div className="text-slate-950 font-extrabold text-base">¥{(m.price ?? 0).toFixed(2)}</div>
+                  <div className="text-slate-950 font-extrabold text-base">{`¥${(m.price ?? 0).toFixed(2)}`}</div>
+                  <div>{getSyncBadge(billingPrices, m.id, m.price)}</div>
                   <div className="text-xs text-slate-500">{m.description || ""}</div>
                 </div>
               ))}

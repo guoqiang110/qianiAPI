@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import {
   useEffect, useMemo, useRef, useState } from "react";
@@ -816,7 +816,10 @@ export default function StudioPage() {
                             }
                           >
                             <div className="mb-2 flex items-start justify-between gap-2">
-                              <strong className="rounded-2xl border-white/70 bg-white/78 text-sm shadow-[0_10px_24px_rgba(59,130,246,0.08)] backdrop-blur">{item.name}</strong>
+                              <div className="min-w-0">
+                                <strong className="block text-sm font-extrabold text-slate-950">{item.name}</strong>
+                                <span className="mt-0.5 block text-[10px] font-mono text-slate-400">{item.id}</span>
+                              </div>
                               {item.badge ? (
                                 <Badge
                                   variant={item.id === model ? "default" : "secondary"}
@@ -826,10 +829,10 @@ export default function StudioPage() {
                                 </Badge>
                               ) : null}
                             </div>
-                            <p className="mb-2 line-clamp-2 text-xs text-muted-foreground">
+                            <p className="mb-2 line-clamp-2 text-xs leading-6 text-slate-500">
                               {item.description || item.provider}
                             </p>
-                            <span className="text-[10px] text-muted-foreground">{item.provider}</span>
+                            <span className="text-[10px] font-medium text-slate-400">{item.provider}</span>
                           </button>
                         ))}
                       </div>
@@ -915,6 +918,7 @@ export default function StudioPage() {
     </div>
   );
 }
+
 
 
 

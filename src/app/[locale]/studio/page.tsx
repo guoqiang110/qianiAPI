@@ -157,6 +157,9 @@ export default function StudioPage() {
   const [library, setLibrary] = useState<LibraryItem[]>([]);
   const [zoomImage, setZoomImage] = useState<string | null>(null);
   const [libraryFilter, setLibraryFilter] = useState<string>("all");
+  const [librarySort, setLibrarySort] = useState<"newest" | "oldest" | "model">("newest");
+  const [selectedLibraryItems, setSelectedLibraryItems] = useState<Set<string>>(new Set());
+  const [copied, setCopied] = useState(false);
   const [promptLang, setPromptLang] = useState<"zh" | "en">("zh");
   const [status, setStatus] = useState("加载生图工作台...");
   const [loading, setLoading] = useState(false);
@@ -317,6 +320,25 @@ export default function StudioPage() {
       return next;
     });
     setStatus("已从作品库删除");
+  }
+
+  function toggleLibrarySelect(id: string) {
+    const next = new Set(selectedLibraryItems);
+    if (next.has(id)) next.delete(id); else next.add(id);
+    setSelectedLibraryItems(next);
+  }
+  function selectAllLibrary() {
+    if (selectedLibraryItems.size === filteredLibrary.length) {
+      setSelectedLibraryItems(new Set());
+    } else {
+      setSelectedLibraryItems(new Set(filteredLibrary.map((i) => i.id)));
+    }
+  }
+  function batchDeleteSelected() {
+    const ids = selectedLibraryItems;
+    setLibrary((prev) => prev.filter((item) => !ids.has(item.id)));
+    setSelectedLibraryItems(new Set());
+    setStatus("已批量删除选中作品");
   }
 
   function clearLibrary() {
@@ -676,7 +698,16 @@ export default function StudioPage() {
                       </div>
                       <div className="space-y-3 border-t border-slate-100 p-4 text-xs text-slate-500">
                         <div className="flex items-center justify-between gap-3">
-                          <span>{model} · {size}</span>
+                          <div className="flex flex-wrap items-center gap-1.5">
+                            <span className="inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-violet-500/10 to-purple-500/10 px-2.5 py-1 text-[11px] font-semibold text-violet-700 ring-1 ring-violet-200/50">
+                              <Sparkles className="h-3 w-3 text-violet-500" />
+                              {model}
+                            </span>
+                            <span className="inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-sky-500/10 to-teal-500/10 px-2.5 py-1 text-[11px] font-semibold text-sky-700 ring-1 ring-sky-200/50">
+                              <Maximize className="h-3 w-3 text-sky-500" />
+                              {size}
+                            </span>
+                          </div>
                           <a
                             href={src}
                             download={`qianxi-${Date.now()}-${i + 1}.png`}

@@ -55,3 +55,4 @@ const Footer = forwardRef<HTMLDivElement, FooterProps>(({ className }, ref) => {
 
 Footer.displayName = "AppFooter";
 export default Footer;
+

@@ -147,7 +147,7 @@ export default function PricingPage() {
           <p className="text-sm leading-7 text-slate-600 mb-4">
             语言大模型（GPT、Claude、DeepSeek 等）走 New-API 计价体系，请在控制台查看实时价格。
           </p>
-          <Link href="/console" className="inline-flex h-10 items-center rounded-xl bg-slate-950 px-4 text-sm font-bold text-white no-underline transition hover:opacity-90">
+          <Link href="/zh/console" className="inline-flex h-10 items-center rounded-xl bg-slate-950 px-4 text-sm font-bold text-white no-underline transition hover:opacity-90">
             前往控制台 →
           </Link>
         </div>
@@ -173,3 +173,4 @@ export default function PricingPage() {
     </div>
   );
 }
+

@@ -41,7 +41,7 @@ const Header = forwardRef<HTMLDivElement, HeaderProps>(({ className }, ref) => {
 
         {/* Desktop right */}
         <div className="hidden md:flex items-center gap-1">
-          <a href="/console" className="text-sm font-medium text-muted-foreground hover:text-foreground px-3 py-1.5">控制台</a>
+          <a href="/zh/console" className="text-sm font-medium text-muted-foreground hover:text-foreground px-3 py-1.5">控制台</a>
           <LanguageSwitcher />
           <ThemeSwitcher />
         </div>
@@ -63,7 +63,7 @@ const Header = forwardRef<HTMLDivElement, HeaderProps>(({ className }, ref) => {
               )}>{link.label}</a>
             ))}
             <div className="border-t border-slate-100 pt-2 mt-2 flex items-center justify-between">
-              <a href="/console" onClick={() => setMobileOpen(false)} className="rounded-lg px-3 py-2.5 text-sm font-medium text-sky-600 hover:bg-sky-50 transition">控制台</a>
+              <a href="/zh/console" onClick={() => setMobileOpen(false)} className="rounded-lg px-3 py-2.5 text-sm font-medium text-sky-600 hover:bg-sky-50 transition">控制台</a>
               <div className="flex items-center gap-1">
                 <LanguageSwitcher />
                 <ThemeSwitcher />
@@ -78,3 +78,4 @@ const Header = forwardRef<HTMLDivElement, HeaderProps>(({ className }, ref) => {
 
 Header.displayName = "AppHeader";
 export default Header;
+

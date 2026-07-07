@@ -8,6 +8,7 @@ import AppJotai from "@/components/global/app-jotai";
 import AppMessage from "@/components/global/app-message";
 import AppTheme from "@/components/global/app-theme";
 import AppTooltip from "@/components/global/app-tooltip";
+import BackToTop from "@/components/global/back-to-top";
 import { GLOBAL, SEO_DATA } from "@/constants";
 import { env } from "@/env";
 import "@/styles/globals.css";
@@ -127,8 +128,10 @@ export default async function RootLayout({
             </AppJotai>
           </NextIntlClientProvider>
         </AppTheme>
+                <BackToTop />
       </body>
     </html>
   );
 }
+
 

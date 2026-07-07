@@ -17,6 +17,7 @@ import {
   BookmarkPlus,
   Trash2,
   Images,
+  Wand2,
 } from "lucide-react";
 
 type CatalogModel = {
@@ -48,6 +49,12 @@ type LibraryItem = {
 
 const IMAGE_EDIT_MODELS = new Set(["wanx2.1-imageedit"]);
 const LIBRARY_STORAGE_KEY = "qianxi_image_library";
+const PROMPT_PRESETS = [
+  { label: "电商主图", prompt: "一款高端护肤品放在纯净浅色背景上，柔和棚拍光线，商业电商主图风格，真实质感，高清细节" },
+  { label: "海报视觉", prompt: "未来感品牌海报，中心主体突出，强对比灯光，电影级构图，精致排版留白，商业广告风格" },
+  { label: "国风插画", prompt: "中国传统审美国风插画，山水云雾，细腻笔触，雅致配色，高级感构图" },
+  { label: "角色设定", prompt: "年轻女性角色设定图，完整半身，服装细节丰富，统一人物风格，高质量概念设计" },
+];
 
 function normalizeCatalogModel(input: unknown): CatalogModel | null {
   if (!input || typeof input !== "object") return null;
@@ -153,6 +160,12 @@ export default function StudioPage() {
     [catalog, model]
   );
   const showRefImage = isImageEditModel(model);
+  const groupedCatalog = useMemo(() => {
+    return {
+      openai: catalog.filter((item) => /gpt|gemini/i.test(item.id)),
+      domestic: catalog.filter((item) => /seedream|wanx|cogview|hy-image|hunyuan/i.test(item.id)),
+    };
+  }, [catalog]);
 
   useEffect(() => {
     try {
@@ -385,6 +398,21 @@ export default function StudioPage() {
         <aside className="rounded-[24px] border border-slate-200/80 bg-[linear-gradient(180deg,_rgba(255,255,255,0.98),_rgba(248,250,252,0.98))] p-5 h-fit lg:sticky lg:top-20 space-y-4 shadow-[0_18px_48px_rgba(148,163,184,0.10)]">
           <form onSubmit={handleGenerate} className="space-y-4">
             <div className="space-y-2">
+              <Label>提示词模板</Label>
+              <div className="flex flex-wrap gap-2">
+                {PROMPT_PRESETS.map((preset) => (
+                  <button
+                    key={preset.label}
+                    type="button"
+                    onClick={() => setPrompt(preset.prompt)}
+                    className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-[11px] font-bold text-slate-600 transition hover:border-sky-200 hover:bg-sky-50 hover:text-sky-700"
+                  >
+                    <Wand2 className="inline-block h-3 w-3 mr-1" />{preset.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="space-y-2">
               <Label htmlFor="prompt">提示词</Label>
               <Textarea
                 id="prompt"
@@ -459,6 +487,9 @@ export default function StudioPage() {
             )}
 
             <div className="grid grid-cols-2 gap-3">
+              <div className="col-span-2 rounded-xl border border-slate-200/80 bg-slate-50/80 px-3 py-2 text-[11px] text-slate-500">
+                当前建议：先用 1 张 + standard 出草案，满意后再提高数量或质量。
+              </div>
               <div className="space-y-2">
                 <Label htmlFor="size">尺寸</Label>
                 <select
@@ -647,34 +678,47 @@ export default function StudioPage() {
             )}
           </div>
 
-          <div>
+                    <div>
             <h2 className="text-xl font-extrabold mb-3">图片生成模型目录</h2>
-            <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-3">
-              {catalog.map((item) => (
-                <button
-                  key={item.id}
-                  type="button"
-                  onClick={() => setModel(item.id)}
-                  className={`rounded-xl border p-4 text-left transition-colors ${item.id === model ? "border-primary bg-primary/10 ring-1 ring-primary/20 shadow-sm" : "border-border/70 bg-card/90 hover:border-primary/60 hover:bg-primary/5"}`}
-                >
-                  <div className="flex items-start justify-between gap-2 mb-2">
-                    <strong className="text-sm">{item.name}</strong>
-                    {item.badge ? (
-                      <Badge
-                        variant={item.id === model ? "default" : "secondary"}
-                        className={`text-[10px] ${item.id === model ? "" : "bg-secondary text-secondary-foreground"}`}
-                      >
-                        {item.badge}
-                      </Badge>
-                    ) : null}
+            <div className="space-y-5">
+              {[
+                { key: "domestic", title: "国产模型", desc: "乾羲适配层直连，适合中文商业图与快速交付。", items: groupedCatalog.domestic },
+                { key: "openai", title: "OpenAI / Google", desc: "需要上游 API Key，适合高质量创意与通用视觉生成。", items: groupedCatalog.openai },
+              ].filter((group) => group.items.length > 0).map((group) => (
+                <div key={group.key} className="rounded-[20px] border border-slate-200/80 bg-white p-4 shadow-[0_12px_28px_rgba(148,163,184,0.08)]">
+                  <div className="mb-3">
+                    <h3 className="text-sm font-extrabold text-slate-950">{group.title}</h3>
+                    <p className="text-xs text-slate-500 mt-1">{group.desc}</p>
                   </div>
-                  <p className="text-xs text-muted-foreground line-clamp-2 mb-2">
-                    {item.description || item.provider}
-                  </p>
-                  <span className="text-[10px] text-muted-foreground">
-                    {item.provider}
-                  </span>
-                </button>
+                  <div className="grid sm:grid-cols-2 xl:grid-cols-2 gap-3">
+                    {group.items.map((item) => (
+                      <button
+                        key={item.id}
+                        type="button"
+                        onClick={() => setModel(item.id)}
+                        className={`rounded-xl border p-4 text-left transition-colors ${item.id === model ? "border-primary bg-primary/10 ring-1 ring-primary/20 shadow-sm" : "border-border/70 bg-card/90 hover:border-primary/60 hover:bg-primary/5"}`}
+                      >
+                        <div className="flex items-start justify-between gap-2 mb-2">
+                          <strong className="text-sm">{item.name}</strong>
+                          {item.badge ? (
+                            <Badge
+                              variant={item.id === model ? "default" : "secondary"}
+                              className={`text-[10px] ${item.id === model ? "" : "bg-secondary text-secondary-foreground"}`}
+                            >
+                              {item.badge}
+                            </Badge>
+                          ) : null}
+                        </div>
+                        <p className="text-xs text-muted-foreground line-clamp-2 mb-2">
+                          {item.description || item.provider}
+                        </p>
+                        <span className="text-[10px] text-muted-foreground">
+                          {item.provider}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
               ))}
             </div>
           </div>
@@ -723,6 +767,7 @@ export default function StudioPage() {
     </div>
   );
 }
+
 
 
 

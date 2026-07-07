@@ -23,6 +23,8 @@ import {
   ZoomIn,
   Filter,
   Globe,
+  Minus,
+  Plus,
 } from "lucide-react";
 
 type CatalogModel = {
@@ -538,47 +540,74 @@ export default function StudioPage() {
                 </div>
               )}
 
-              <div className="grid grid-cols-2 gap-3">
-                <div className="col-span-2 rounded-2xl border border-white/70 bg-[linear-gradient(135deg,_rgba(255,255,255,0.72),_rgba(254,249,195,0.72),_rgba(219,234,254,0.72))] px-3 py-2 text-[11px] text-slate-700 shadow-[0_10px_24px_rgba(245,158,11,0.10)] backdrop-blur">
+              <div className="space-y-3">
+                <div className="rounded-2xl border border-white/70 bg-[linear-gradient(135deg,_rgba(255,255,255,0.72),_rgba(254,249,195,0.72),_rgba(219,234,254,0.72))] px-3 py-2 text-[11px] text-slate-700 shadow-[0_10px_24px_rgba(245,158,11,0.10)] backdrop-blur">
                   当前建议：先用 1 张 + standard 出草案，满意后再提高数量或质量。
                 </div>
+
                 <div className="space-y-2">
                   <div className="inline-flex items-center gap-2 rounded-full bg-[linear-gradient(135deg,_rgba(59,130,246,0.12),_rgba(45,212,191,0.12))] px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-sky-700">Size</div>
-                  <select
-                    id="size"
-                    value={size}
-                    onChange={(e) => setSize(e.target.value)}
-                    className="h-11 w-full rounded-2xl border border-white/70 bg-white/78 px-3 text-sm shadow-[0_10px_24px_rgba(59,130,246,0.08)] backdrop-blur"
-                  >
-                    <option value="1024x1024">1024x1024</option>
-                    <option value="1536x1024">1536x1024</option>
-                    <option value="1024x1536">1024x1536</option>
-                  </select>
+                  <div className="grid grid-cols-3 gap-2">
+                    {["1024x1024", "1536x1024", "1024x1536"].map((option) => (
+                      <button
+                        key={option}
+                        type="button"
+                        onClick={() => setSize(option)}
+                        className={
+                          size === option
+                            ? "rounded-xl border border-sky-300 bg-sky-600 px-3 py-2 text-xs font-extrabold text-white shadow-[0_10px_24px_rgba(59,130,246,0.20)]"
+                            : "rounded-xl border border-white/70 bg-white/78 px-3 py-2 text-xs font-bold text-slate-600 shadow-[0_10px_24px_rgba(59,130,246,0.08)] hover:border-sky-200 hover:text-sky-700 transition"
+                        }
+                      >
+                        {option}
+                      </button>
+                    ))}
+                  </div>
                 </div>
+
                 <div className="space-y-2">
                   <div className="inline-flex items-center gap-2 rounded-full bg-[linear-gradient(135deg,_rgba(245,158,11,0.12),_rgba(236,72,153,0.10))] px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-amber-700">Quality</div>
-                  <select
-                    id="quality"
-                    value={quality}
-                    onChange={(e) => setQuality(e.target.value)}
-                    className="h-11 w-full rounded-2xl border border-white/70 bg-white/78 px-3 text-sm shadow-[0_10px_24px_rgba(59,130,246,0.08)] backdrop-blur"
-                  >
-                    <option value="standard">standard</option>
-                    <option value="high">high</option>
-                  </select>
+                  <div className="grid grid-cols-2 gap-2">
+                    {["standard", "high"].map((option) => (
+                      <button
+                        key={option}
+                        type="button"
+                        onClick={() => setQuality(option)}
+                        className={
+                          quality === option
+                            ? "rounded-xl border border-amber-300 bg-amber-500 px-3 py-2 text-xs font-extrabold text-white shadow-[0_10px_24px_rgba(245,158,11,0.18)]"
+                            : "rounded-xl border border-white/70 bg-white/78 px-3 py-2 text-xs font-bold text-slate-600 shadow-[0_10px_24px_rgba(59,130,246,0.08)] hover:border-amber-200 hover:text-amber-700 transition"
+                        }
+                      >
+                        {option}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-              </div>
 
-              <div className="space-y-2">
-                <div className="inline-flex items-center gap-2 rounded-full bg-[linear-gradient(135deg,_rgba(34,197,94,0.12),_rgba(59,130,246,0.10))] px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-emerald-700">Count</div>
-                <Input
-                  id="count"
-                  type="number"
-                  min="1"
-                  max="4"
-                  value={count}
-                  onChange={(e) => setCount(e.target.value)}
-                />
+                <div className="space-y-2">
+                  <div className="inline-flex items-center gap-2 rounded-full bg-[linear-gradient(135deg,_rgba(34,197,94,0.12),_rgba(59,130,246,0.10))] px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-emerald-700">Count</div>
+                  <div className="flex items-center justify-between rounded-2xl border border-white/70 bg-white/78 px-3 py-2 shadow-[0_10px_24px_rgba(59,130,246,0.08)] backdrop-blur">
+                    <button
+                      type="button"
+                      onClick={() => setCount(String(Math.max(1, (Number(count) || 1) - 1)))}
+                      className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-500 transition hover:border-emerald-200 hover:text-emerald-700"
+                    >
+                      <Minus className="h-4 w-4" />
+                    </button>
+                    <div className="text-center">
+                      <div className="text-lg font-extrabold text-slate-950">{count}</div>
+                      <div className="text-[10px] text-slate-400">1 - 4 张</div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setCount(String(Math.min(4, (Number(count) || 1) + 1)))}
+                      className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-500 transition hover:border-emerald-200 hover:text-emerald-700"
+                    >
+                      <Plus className="h-4 w-4" />
+                    </button>
+                  </div>
+                </div>
               </div>
 
               {!isCnImageModel(model) && (
@@ -918,6 +947,7 @@ export default function StudioPage() {
     </div>
   );
 }
+
 
 
 

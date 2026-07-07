@@ -500,9 +500,9 @@ export default function StudioPage() {
 
               {showRefImage && (
                 <div className="space-y-2">
-                  <Label>参考图</Label>
+                  <div className="inline-flex items-center gap-2 rounded-full bg-[linear-gradient(135deg,_rgba(168,85,247,0.12),_rgba(59,130,246,0.10))] px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-violet-700">参考图</div>
                   {refImage ? (
-                    <div className="relative overflow-hidden rounded-lg border border-primary/15 bg-gradient-to-br from-primary/10 via-background to-accent/50">
+                    <div className="relative overflow-hidden rounded-2xl border border-white/70 bg-[linear-gradient(135deg,_rgba(255,255,255,0.88),_rgba(224,242,254,0.74),_rgba(237,233,254,0.66))] shadow-[0_12px_28px_rgba(59,130,246,0.10)] backdrop-blur">
                       <div className="relative aspect-video">
                         <Image
                           src={`data:image/png;base64,${refImage}`}
@@ -515,19 +515,21 @@ export default function StudioPage() {
                       <button
                         type="button"
                         onClick={clearRefImage}
-                        className="absolute right-2 top-2 rounded-full border border-border/70 bg-background/90 p-1 shadow-sm transition-colors hover:border-primary/30 hover:bg-background"
+                        className="absolute right-3 top-3 inline-flex h-8 w-8 items-center justify-center rounded-full border border-white/60 bg-black/35 text-white backdrop-blur transition hover:bg-black/50"
                       >
                         <X className="h-4 w-4" />
                       </button>
-                      <p className="truncate px-3 pb-2 text-xs text-muted-foreground">
-                        {refImageName}
-                      </p>
+                      <div className="border-t border-white/60 px-3 py-2">
+                        <p className="truncate text-xs font-medium text-slate-500">{refImageName}</p>
+                      </div>
                     </div>
                   ) : (
-                    <label className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-primary/30 bg-primary/5 p-6 text-sm text-muted-foreground transition-colors hover:border-primary hover:bg-primary/10">
-                      <Upload className="h-5 w-5" />
-                      点击上传参考图
-                      <span className="text-xs">PNG / JPG / WebP，最大 10MB</span>
+                    <label className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-violet-200/80 bg-[linear-gradient(135deg,_rgba(245,243,255,0.9),_rgba(255,255,255,0.98),_rgba(224,242,254,0.78))] p-6 text-sm text-slate-500 shadow-[0_10px_24px_rgba(139,92,246,0.08)] transition hover:border-violet-300 hover:text-violet-700">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/90 shadow-sm">
+                        <Upload className="h-5 w-5 text-violet-600" />
+                      </div>
+                      <span className="font-bold text-slate-700">点击上传参考图</span>
+                      <span className="text-xs text-slate-400">PNG / JPG / WebP，最大 10MB</span>
                       <input
                         ref={fileInputRef}
                         type="file"
@@ -947,6 +949,7 @@ export default function StudioPage() {
     </div>
   );
 }
+
 
 
 

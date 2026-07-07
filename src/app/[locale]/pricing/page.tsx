@@ -141,15 +141,31 @@ export default function PricingPage() {
           </div>
         )}
 
-        {/* llm redirect */}
+                {/* llm pricing */}
         <div className="rounded-[22px] border border-sky-200/80 bg-[linear-gradient(180deg,_rgba(239,246,255,0.96),_rgba(255,255,255,0.98))] p-6">
           <h2 className="text-lg font-extrabold text-slate-950 mb-2">语言模型定价</h2>
-          <p className="text-sm leading-7 text-slate-600 mb-4">
-            语言大模型（GPT、Claude、DeepSeek 等）走 New-API 计价体系，请在控制台查看实时价格。
-          </p>
-          <Link href="/zh/console" className="inline-flex h-10 items-center rounded-xl bg-slate-950 px-4 text-sm font-bold text-white no-underline transition hover:opacity-90">
-            前往控制台 →
-          </Link>
+          <p className="text-sm leading-7 text-slate-600 mb-4">大语言模型按 token 计费，以下为参考均价。精确价格请在控制台查看。</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+            {[
+              { name:"GPT-5.5", provider:"OpenAI", input:"¥0.005/K", output:"¥0.015/K" },
+              { name:"Claude Sonnet 4", provider:"Anthropic", input:"¥0.003/K", output:"¥0.015/K" },
+              { name:"DeepSeek V4 Flash", provider:"DeepSeek", input:"¥0.001/K", output:"¥0.004/K" },
+              { name:"通义千问 Max", provider:"阿里云", input:"¥0.005/K", output:"¥0.02/K" },
+            ].map(llm => (
+              <div key={llm.name} className="rounded-xl bg-white/80 px-4 py-3 flex items-center justify-between gap-2">
+                <div>
+                  <span className="text-sm font-extrabold text-slate-950">{llm.name}</span>
+                  <span className="text-xs text-slate-400 ml-2">{llm.provider}</span>
+                </div>
+                <div className="text-xs text-right">
+                  <span className="text-slate-500">输入 {llm.input}</span>
+                  <span className="text-slate-400 mx-1">·</span>
+                  <span className="text-slate-500">输出 {llm.output}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+          <Link href="/zh/console" className="inline-flex h-10 items-center rounded-xl bg-slate-950 px-4 text-sm font-bold text-white no-underline transition hover:opacity-90">控制台查实时价 →</Link>
         </div>
 
         {/* unpriced */}
@@ -173,4 +189,5 @@ export default function PricingPage() {
     </div>
   );
 }
+
 

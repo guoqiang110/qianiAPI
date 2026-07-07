@@ -618,7 +618,7 @@ export default function StudioPage() {
               </div>
               {images.length === 0 ? (
                 <div className="flex min-h-[520px] items-center justify-center rounded-[28px] border border-sky-200/70 bg-[linear-gradient(180deg,_rgba(255,255,255,0.98),_rgba(224,242,254,0.78),_rgba(237,233,254,0.68))] px-6 text-center text-sm text-slate-500 shadow-[0_22px_56px_rgba(59,130,246,0.10)]">
-                  还没有图片。输入提示词后点击生成。
+                  在左侧选择模型、输入提示词，点击「生成图片」即可开始创作。
                 </div>
               ) : (
                 <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-2">
@@ -649,7 +649,7 @@ export default function StudioPage() {
                           <a
                             href={src}
                             download={`qianxi-${Date.now()}-${i + 1}.png`}
-                            className="inline-flex items-center gap-1 font-bold text-primary hover:underline"
+                            className="inline-flex items-center gap-1 font-bold text-sky-600 hover:text-sky-700 hover:underline transition-colors"
                           >
                             <Download className="h-3.5 w-3.5" />下载
                           </a>
@@ -752,7 +752,7 @@ export default function StudioPage() {
                             <a
                               href={item.image}
                               download={`qianxi-library-${item.id}.png`}
-                              className="inline-flex items-center gap-1 font-bold text-primary hover:underline"
+                              className="inline-flex items-center gap-1 font-bold text-sky-600 hover:text-sky-700 hover:underline transition-colors"
                             >
                               <Download className="h-3.5 w-3.5" />下载
                             </a>
@@ -851,11 +851,11 @@ export default function StudioPage() {
                   {sessionHistory.slice(0, 20).map((rec, i) => (
                     <div
                       key={`${rec.time}-${i}`}
-                      className="rounded-lg border border-border/70 bg-card/80 p-3 text-sm shadow-sm"
+                      className="rounded-xl border border-slate-200/80 bg-[linear-gradient(180deg,_rgba(255,255,255,0.98),_rgba(248,250,252,0.96))] p-3 text-sm shadow-sm"
                     >
                       <div className="mb-1 flex items-center gap-2">
                         <span
-                          className={`inline-flex rounded-full px-2 py-0.5 text-[10px] font-bold ${rec.status === "success" ? "bg-primary text-primary-foreground" : "bg-red-100 text-red-700"}`}
+                          className={`inline-flex rounded-full px-2 py-0.5 text-[10px] font-extrabold ${rec.status === "success" ? "bg-emerald-100 text-emerald-700" : "bg-red-100 text-red-700"}`}
                         >
                           {rec.status === "success" ? "成功" : "失败"}
                         </span>
@@ -863,10 +863,10 @@ export default function StudioPage() {
                           {rec.model} · {rec.time}
                         </span>
                         {rec.hasRef ? (
-                          <span className="text-[10px] text-muted-foreground">参考图</span>
+                          <span className="text-[10px] text-slate-300">参考图</span>
                         ) : null}
                       </div>
-                      <p className="line-clamp-2 text-xs text-muted-foreground">{rec.prompt}</p>
+                      <p className="line-clamp-2 text-xs text-slate-500">{rec.prompt}</p>
                       {rec.message ? (
                         <p className="mt-1 text-xs text-red-500">{rec.message}</p>
                       ) : null}

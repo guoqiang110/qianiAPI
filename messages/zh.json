@@ -17,16 +17,12 @@
       "network_error": "网络服务错误，请查看网络状态或稍后再试！"
     },
     "footer": {
-      "copyright_content": "由<logo></logo>驱动",
-      "copyright_leading": "内容由AI生成，仅供参考"
+      "copyright_content": "乾羲API — AI 模型统一接入网关",
+      "copyright_leading": "沪ICP备XXXXXXXX号"
     },
     "header": {
-      "github_hyperlink": {
-        "label": "GitHub仓库链接"
-      },
-      "language_switcher": {
-        "switch_language": "切换语言"
-      },
+      "github_hyperlink": { "label": "GitHub 仓库" },
+      "language_switcher": { "switch_language": "切换语言" },
       "theme_switcher": {
         "dark": "暗色模式",
         "light": "亮色模式",
@@ -36,19 +32,13 @@
       "tool_info": {
         "description": "当前工具相关信息",
         "title": "关于",
-        "trigger": {
-          "label": "打开/关闭工具信息弹窗"
-        }
+        "trigger": { "label": "打开/关闭工具信息弹窗" }
       }
     }
   },
   "translation": {
     "global": {
-      "header": {
-        "github_hyperlink": {
-          "label": "Github Repo"
-        }
-      }
+      "header": { "github_hyperlink": { "label": "Github Repo" } }
     }
   }
 }

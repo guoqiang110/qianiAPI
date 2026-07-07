@@ -6,12 +6,12 @@ const tools = [
   {
     id: "prompts", name: "Yao Open Prompts", icon: BookOpen,
     desc: "200+ AI提示词库，覆盖内容创作、GEO、营销、设计、开发等场景。按类别检索，一键复制使用。",
-    href: "/tools/yao-open-prompts/", badge: "提示词库", color: "from-sky-500 to-blue-600",
+    href: "/zh/tools/yao-open-prompts", badge: "提示词库", color: "from-sky-500 to-blue-600",
   },
   {
     id: "geo", name: "Yao GEO Skills", icon: Search,
     desc: "生成式引擎优化全流程工具：站点审计、知识库构建、内容精炼、标题优化、排名追踪。",
-    href: "/tools/yao-geo-skills/", badge: "GEO 全流程", color: "from-emerald-500 to-teal-600",
+    href: "/zh/tools/yao-geo-skills", badge: "GEO 全流程", color: "from-emerald-500 to-teal-600",
   },
   {
     id: "audit", name: "乾羲 GEO 审计", icon: BarChart3,
@@ -90,3 +90,4 @@ export default function ToolsPage() {
     </div>
   );
 }
+

@@ -367,22 +367,22 @@ export default function StudioPage() {
   return (
     <div className="flex-1">
       <section className="border-b border-sky-100 bg-[radial-gradient(circle_at_top_left,_rgba(37,99,235,0.16),_transparent_30%),linear-gradient(180deg,_rgba(255,255,255,0.98),_rgba(239,246,255,0.90))]">
-        <div className="mx-auto max-w-7xl px-4 md:px-6 py-10 lg:py-14">
+        <div className="mx-auto max-w-7xl px-4 md:px-6 py-8 lg:py-10">
       <div className="max-w-3xl">
-        <Badge className="mb-3 border border-sky-200 bg-white/85 text-sky-700 shadow-none">QIANXI API STUDIO · PHASE 2</Badge>
+        <Badge className="mb-3 border border-sky-200 bg-white/85 text-sky-700 shadow-none">QIANXI IMAGE STUDIO</Badge>
         <h1 className="text-4xl font-extrabold tracking-tight text-slate-950 mb-3 lg:text-5xl">
           在线生图工作台
         </h1>
-        <p className="text-base leading-8 text-slate-600 max-w-2xl">
+        <p className="text-base leading-7 text-slate-600 max-w-3xl">
           支持 GPT Image 2、Seedream、万相、CogView、混元等模型。国内模型走乾羲适配层，OpenAI 系模型需提供 API Key。
         </p>
       </div>
 
     </div>
   </section>
-  <div className="mx-auto max-w-7xl px-4 md:px-6 py-8">
-      <section className="grid lg:grid-cols-[340px_1fr] gap-6">
-        <aside className="rounded-[24px] border border-slate-200/80 bg-[linear-gradient(180deg,_rgba(255,255,255,0.98),_rgba(248,250,252,0.98))] p-5 h-fit lg:sticky lg:top-6 space-y-4 shadow-[0_18px_48px_rgba(148,163,184,0.10)]">
+  <div className="mx-auto max-w-7xl px-4 md:px-6 py-6 lg:py-8">
+      <section className="grid lg:grid-cols-[380px_minmax(0,1fr)] gap-6">
+        <aside className="rounded-[24px] border border-slate-200/80 bg-[linear-gradient(180deg,_rgba(255,255,255,0.98),_rgba(248,250,252,0.98))] p-5 h-fit lg:sticky lg:top-20 space-y-4 shadow-[0_18px_48px_rgba(148,163,184,0.10)]">
           <form onSubmit={handleGenerate} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="prompt">提示词</Label>
@@ -534,17 +534,17 @@ export default function StudioPage() {
               {activeModel && <Badge variant="secondary">{activeModel.name}</Badge>}
             </div>
             {images.length === 0 ? (
-              <div className="flex min-h-[420px] items-center justify-center rounded-[24px] border border-slate-200/80 bg-[linear-gradient(180deg,_rgba(255,255,255,0.98),_rgba(248,250,252,0.98))] px-6 text-center text-sm text-slate-500 shadow-[0_18px_48px_rgba(148,163,184,0.10)]">
+              <div className="flex min-h-[520px] items-center justify-center rounded-[24px] border border-slate-200/80 bg-[linear-gradient(180deg,_rgba(255,255,255,0.98),_rgba(248,250,252,0.98))] px-6 text-center text-sm text-slate-500 shadow-[0_18px_48px_rgba(148,163,184,0.10)]">
                 还没有图片。输入提示词后点击生成。
               </div>
             ) : (
-              <div className="grid sm:grid-cols-2 gap-4">
+              <div className="grid sm:grid-cols-2 xl:grid-cols-2 gap-5">
                 {images.map((src, i) => (
                   <article
                     key={`${src}-${i}`}
-                    className="overflow-hidden rounded-xl border border-border/70 bg-card/95 shadow-sm"
+                    className="overflow-hidden rounded-[20px] border border-slate-200/80 bg-white shadow-[0_14px_36px_rgba(148,163,184,0.10)] overflow-hidden"
                   >
-                    <div className="relative aspect-square bg-gradient-to-br from-primary/5 via-background to-accent/30">
+                    <div className="relative aspect-[4/4] bg-[linear-gradient(135deg,_rgba(239,246,255,0.95),_rgba(255,255,255,0.98))]">
                       <Image
                         src={src}
                         alt={`生成 ${i + 1}`}
@@ -553,7 +553,7 @@ export default function StudioPage() {
                         unoptimized
                       />
                     </div>
-                    <div className="space-y-3 p-3 border-t text-xs text-muted-foreground">
+                    <div className="space-y-3 p-4 border-t border-slate-100 text-xs text-slate-500">
                       <div className="flex items-center justify-between gap-3">
                         <span>{model} · {size}</span>
                         <a
@@ -594,7 +594,7 @@ export default function StudioPage() {
               ) : null}
             </div>
             {library.length === 0 ? (
-              <div className="flex min-h-[240px] items-center justify-center rounded-xl border border-border/70 bg-card/50 px-6 text-center text-sm text-muted-foreground">
+              <div className="flex min-h-[260px] items-center justify-center rounded-[20px] border border-slate-200/80 bg-white px-6 text-center text-sm text-slate-500 shadow-[0_14px_36px_rgba(148,163,184,0.08)]">
                 作品库还是空的。生成后点击“存入作品库”，刷新页面也不会丢。
               </div>
             ) : (
@@ -602,9 +602,9 @@ export default function StudioPage() {
                 {library.map((item) => (
                   <article
                     key={item.id}
-                    className="overflow-hidden rounded-xl border border-border/70 bg-card/95 shadow-sm"
+                    className="overflow-hidden rounded-[20px] border border-slate-200/80 bg-white shadow-[0_14px_36px_rgba(148,163,184,0.10)] overflow-hidden"
                   >
-                    <div className="relative aspect-square bg-gradient-to-br from-primary/5 via-background to-accent/30">
+                    <div className="relative aspect-[4/4] bg-[linear-gradient(135deg,_rgba(239,246,255,0.95),_rgba(255,255,255,0.98))]">
                       <Image
                         src={item.image}
                         alt={item.prompt}
@@ -723,5 +723,6 @@ export default function StudioPage() {
     </div>
   );
 }
+
 
 

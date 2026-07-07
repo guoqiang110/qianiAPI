@@ -18,6 +18,7 @@ import {
   BookmarkPlus,
   Trash2,
   Images,
+  ArrowLeft,
   Wand2,
   ZoomIn,
   Filter,
@@ -408,24 +409,25 @@ export default function StudioPage() {
   }
 
   return (
-    <div className="flex-1">
-      <section className="border-b border-sky-100 bg-[radial-gradient(circle_at_top_left,_rgba(37,99,235,0.16),_transparent_30%),linear-gradient(180deg,_rgba(255,255,255,0.98),_rgba(239,246,255,0.90))]">
-        <div className="mx-auto max-w-7xl px-4 py-8 md:px-6 lg:py-10">
-          <div className="max-w-3xl">
-            <Badge className="mb-3 border border-sky-200 bg-white/85 text-sky-700 shadow-none">
-              QIANXI IMAGE STUDIO
-            </Badge>
-            <h1 className="mb-3 text-4xl font-extrabold tracking-tight text-slate-950 lg:text-5xl">
-              在线生图工作台
-            </h1>
-            <p className="max-w-3xl text-base leading-7 text-slate-600">
-              支持 GPT Image 2、Seedream、万相、CogView、混元等模型。国内模型走乾羲适配层，OpenAI 系模型需提供 API Key。
-            </p>
-          </div>
+    <div className="flex flex-1 flex-col overflow-hidden">
+      <header className="flex items-center justify-between border-b border-sky-200/70 bg-[linear-gradient(180deg,_rgba(255,255,255,0.98),_rgba(239,246,255,0.78))] px-6 py-3 backdrop-blur shadow-[0_6px_18px_rgba(59,130,246,0.06)]">
+        <a href="/zh" className="flex items-center gap-3 rounded-full bg-white/60 px-3 py-1.5 text-xs font-bold text-slate-600 shadow-sm transition hover:bg-sky-50 hover:text-sky-700">
+          <ArrowLeft className="h-3.5 w-3.5" />返回乾羲主站
+        </a>
+        <div className="flex items-center gap-3">
+          <div className="h-5 w-px bg-sky-200" />
+          <Image src="/logo.png" alt="乾羲" width={28} height={28} className="rounded-md" />
+          <span className="text-sm font-extrabold text-slate-900">乾羲生图</span>
+          <Badge className="border border-sky-200 bg-sky-50 text-[10px] text-sky-700 shadow-none">V2.0</Badge>
         </div>
-      </section>
+        <div className="flex items-center gap-3">
+          <span className="text-[11px] text-slate-500">{activeModel ? activeModel.name : "选择模型开始创作"}</span>
+          <div className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+        </div>
+      </header>
 
-      <div className="mx-auto max-w-7xl px-4 py-6 md:px-6 lg:py-8">
+      <div className="flex-1 overflow-auto bg-[linear-gradient(180deg,_rgba(248,250,252,0.98),_rgba(239,246,255,0.68))]">
+        <div className="mx-auto max-w-7xl px-4 py-4 md:px-6 lg:py-6">
         <section className="grid gap-6 lg:grid-cols-[380px_minmax(0,1fr)]">
           <aside className="h-fit space-y-4 rounded-[28px] border border-white/70 bg-[linear-gradient(160deg,_rgba(255,255,255,0.98),_rgba(224,242,254,0.96)_28%,_rgba(237,233,254,0.96)_62%,_rgba(254,249,195,0.78))] p-5 shadow-[0_28px_70px_rgba(59,130,246,0.16)] lg:sticky lg:top-20">
             <form onSubmit={handleGenerate} className="space-y-4">
@@ -909,6 +911,7 @@ export default function StudioPage() {
           </div>
         )}
       </div>
+    </div>
     </div>
   );
 }

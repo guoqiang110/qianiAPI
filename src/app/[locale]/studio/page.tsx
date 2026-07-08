@@ -25,6 +25,7 @@ import {
   Globe,
   Minus,
   Plus,
+  Maximize,
 } from "lucide-react";
 
 type CatalogModel = {
@@ -53,6 +54,8 @@ type LibraryItem = {
   size: string;
   createdAt: string;
 };
+
+type LibraryMode = "local" | "cloud";
 
 const IMAGE_EDIT_MODELS = new Set(["wanx2.1-imageedit"]);
 const LIBRARY_STORAGE_KEY = "qianxi_image_library";
@@ -142,6 +145,37 @@ function persistLibrary(items: LibraryItem[]) {
   } catch {}
 }
 
+function normalizeLibraryItem(input: unknown): LibraryItem | null {
+  if (!input || typeof input !== "object") return null;
+
+  const raw = input as Record<string, unknown>;
+  if (
+    typeof raw.id !== "string" ||
+    typeof raw.image !== "string" ||
+    typeof raw.model !== "string" ||
+    typeof raw.prompt !== "string"
+  ) {
+    return null;
+  }
+
+  return {
+    id: raw.id,
+    image: raw.image,
+    model: raw.model,
+    prompt: raw.prompt,
+    size: typeof raw.size === "string" ? raw.size : "",
+    createdAt:
+      typeof raw.createdAt === "string"
+        ? raw.createdAt
+        : new Date().toISOString(),
+  };
+}
+
+function mapLibraryItems(raw: unknown): LibraryItem[] {
+  if (!Array.isArray(raw)) return [];
+  return raw.map(normalizeLibraryItem).filter((item: unknown): item is LibraryItem => item !== null);
+}
+
 function isCnImageModel(model: string) {
   return /wanx|cogview|seedream|hy-image|hunyuan/i.test(model);
 }
@@ -155,6 +189,8 @@ export default function StudioPage() {
   const [sessionHistory, setSessionHistory] = useState<SessionRecord[]>([]);
   const [images, setImages] = useState<string[]>([]);
   const [library, setLibrary] = useState<LibraryItem[]>([]);
+  const [libraryMode, setLibraryMode] = useState<LibraryMode>("local");
+  const [libraryBusy, setLibraryBusy] = useState(false);
   const [zoomImage, setZoomImage] = useState<string | null>(null);
   const [libraryFilter, setLibraryFilter] = useState<string>("all");
   const [librarySort, setLibrarySort] = useState<"newest" | "oldest" | "model">("newest");
@@ -211,12 +247,62 @@ export default function StudioPage() {
     setLibrary(loadLibrary());
   }, []);
 
+  async function loadCloudLibrary(key: string) {
+    const response = await fetch("/api/studio-assets", {
+      headers: { Authorization: `Bearer ${key}` },
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      throw new Error(
+        data?.error?.message || data?.error || data?.message || `HTTP ${response.status}`
+      );
+    }
+    const next = Array.isArray(data?.data)
+      ? mapLibraryItems(data.data)
+      : [];
+    setLibrary(next);
+    persistLibrary(next);
+    setLibraryMode("cloud");
+  }
+
   useEffect(() => {
     try {
       if (apiKey) {
         window.localStorage.setItem("qianxi_api_key", apiKey);
       }
     } catch {}
+  }, [apiKey]);
+
+  useEffect(() => {
+    if (!apiKey) {
+      setLibrary(loadLibrary());
+      setLibraryMode("local");
+      return;
+    }
+
+    let cancelled = false;
+    setLibraryBusy(true);
+
+    loadCloudLibrary(apiKey)
+      .then(() => {
+        if (!cancelled) {
+          setStatus("已连接云端作品库。生成结果可跨设备保留。");
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setLibrary(loadLibrary());
+          setLibraryMode("local");
+          setStatus("云端作品库不可用，已回退到本地作品库。");
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setLibraryBusy(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
   }, [apiKey]);
 
   useEffect(() => {
@@ -295,31 +381,91 @@ export default function StudioPage() {
     if (fileInputRef.current) fileInputRef.current.value = "";
   }
 
-  function saveToLibrary(image: string) {
+  async function saveToLibrary(image: string) {
     const item: LibraryItem = {
       id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
       image,
       model,
       prompt: prompt.trim(),
       size,
-      createdAt: new Date().toLocaleString(),
+      createdAt: new Date().toISOString(),
     };
 
-    setLibrary((prev) => {
-      const next = [item, ...prev].slice(0, 100);
+    if (!apiKey) {
+      setLibrary((prev) => {
+        const next = [item, ...prev].slice(0, 100);
+        persistLibrary(next);
+        return next;
+      });
+      setLibraryMode("local");
+      setStatus("已保存到本地作品库");
+      return;
+    }
+
+    setLibraryBusy(true);
+    try {
+      const response = await fetch("/api/studio-assets", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify(item),
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        throw new Error(
+          data?.error?.message || data?.error || data?.message || `HTTP ${response.status}`
+        );
+      }
+      const next = Array.isArray(data?.data)
+        ? mapLibraryItems(data.data)
+        : [item, ...library].slice(0, 100);
+      setLibrary(next);
       persistLibrary(next);
-      return next;
-    });
-    setStatus("已保存到作品库");
+      setLibraryMode("cloud");
+      setStatus("已保存到云端作品库");
+    } catch (error) {
+      setStatus(`保存到云端失败：${error instanceof Error ? error.message : "unknown"}`);
+    } finally {
+      setLibraryBusy(false);
+    }
   }
 
-  function removeLibraryItem(id: string) {
-    setLibrary((prev) => {
-      const next = prev.filter((item) => item.id !== id);
+  async function removeLibraryItem(id: string) {
+    if (!apiKey || libraryMode === "local") {
+      setLibrary((prev) => {
+        const next = prev.filter((item) => item.id !== id);
+        persistLibrary(next);
+        return next;
+      });
+      setStatus("已从本地作品库删除");
+      return;
+    }
+
+    setLibraryBusy(true);
+    try {
+      const response = await fetch(`/api/studio-assets/${encodeURIComponent(id)}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${apiKey}` },
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        throw new Error(
+          data?.error?.message || data?.error || data?.message || `HTTP ${response.status}`
+        );
+      }
+      const next = Array.isArray(data?.data)
+        ? mapLibraryItems(data.data)
+        : library.filter((item) => item.id !== id);
+      setLibrary(next);
       persistLibrary(next);
-      return next;
-    });
-    setStatus("已从作品库删除");
+      setStatus("已从云端作品库删除");
+    } catch (error) {
+      setStatus(`删除失败：${error instanceof Error ? error.message : "unknown"}`);
+    } finally {
+      setLibraryBusy(false);
+    }
   }
 
   function toggleLibrarySelect(id: string) {
@@ -334,17 +480,67 @@ export default function StudioPage() {
       setSelectedLibraryItems(new Set(filteredLibrary.map((i) => i.id)));
     }
   }
-  function batchDeleteSelected() {
+  async function batchDeleteSelected() {
     const ids = selectedLibraryItems;
-    setLibrary((prev) => prev.filter((item) => !ids.has(item.id)));
-    setSelectedLibraryItems(new Set());
-    setStatus("已批量删除选中作品");
+    if (!ids.size) return;
+
+    if (!apiKey || libraryMode === "local") {
+      setLibrary((prev) => {
+        const next = prev.filter((item) => !ids.has(item.id));
+        persistLibrary(next);
+        return next;
+      });
+      setSelectedLibraryItems(new Set());
+      setStatus("已批量删除本地作品");
+      return;
+    }
+
+    setLibraryBusy(true);
+    try {
+      for (const id of ids) {
+        await fetch(`/api/studio-assets/${encodeURIComponent(id)}`, {
+          method: "DELETE",
+          headers: { Authorization: `Bearer ${apiKey}` },
+        });
+      }
+      await loadCloudLibrary(apiKey);
+      setSelectedLibraryItems(new Set());
+      setStatus("已批量删除云端作品");
+    } catch (error) {
+      setStatus(`批量删除失败：${error instanceof Error ? error.message : "unknown"}`);
+    } finally {
+      setLibraryBusy(false);
+    }
   }
 
-  function clearLibrary() {
-    setLibrary([]);
-    persistLibrary([]);
-    setStatus("作品库已清空");
+  async function clearLibrary() {
+    if (!apiKey || libraryMode === "local") {
+      setLibrary([]);
+      persistLibrary([]);
+      setStatus("本地作品库已清空");
+      return;
+    }
+
+    setLibraryBusy(true);
+    try {
+      const response = await fetch("/api/studio-assets", {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${apiKey}` },
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        throw new Error(
+          data?.error?.message || data?.error || data?.message || `HTTP ${response.status}`
+        );
+      }
+      setLibrary([]);
+      persistLibrary([]);
+      setStatus("云端作品库已清空");
+    } catch (error) {
+      setStatus(`清空失败：${error instanceof Error ? error.message : "unknown"}`);
+    } finally {
+      setLibraryBusy(false);
+    }
   }
 
   async function handleGenerate(e: React.FormEvent) {
@@ -738,9 +934,12 @@ export default function StudioPage() {
                   <Images className="h-4 w-4" />
                   <div className="inline-flex items-center gap-2 rounded-full bg-[linear-gradient(135deg,_rgba(168,85,247,0.12),_rgba(236,72,153,0.10))] px-3 py-1.5 text-sm font-extrabold text-slate-900"><Images className="h-4 w-4 text-violet-600" />作品库</div>
                   <Badge variant="secondary">{library.length}</Badge>
+                  <Badge variant="outline" className="border-slate-200 bg-white/80 text-slate-600">
+                    {libraryBusy ? "同步中" : libraryMode === "cloud" ? "云端" : "本地"}
+                  </Badge>
                 </div>
                 {library.length > 0 ? (
-                  <Button type="button" variant="outline" onClick={clearLibrary}>
+                  <Button type="button" variant="outline" onClick={clearLibrary} disabled={libraryBusy}>
                     <Trash2 className="mr-2 h-4 w-4" /><span className="text-[11px] font-bold">清空作品库</span>
                   </Button>
                 ) : null}
@@ -771,7 +970,7 @@ export default function StudioPage() {
 
               {library.length === 0 ? (
                 <div className="flex min-h-[260px] items-center justify-center rounded-[24px] border border-sky-200/70 bg-[linear-gradient(180deg,_rgba(255,255,255,0.98),_rgba(224,242,254,0.84),_rgba(237,233,254,0.58))] px-6 text-center text-sm text-slate-500 shadow-[0_18px_42px_rgba(59,130,246,0.08)]">
-                  作品库还是空的。生成后点击“存入作品库”，刷新页面也不会丢。
+                  作品库还是空的。生成后点击“存入作品库”，{libraryMode === "cloud" ? "会同步到云端。" : "刷新页面也不会丢。"}
                 </div>
               ) : filteredLibrary.length === 0 ? (
                 <div className="flex min-h-[220px] items-center justify-center rounded-[24px] border border-amber-200/70 bg-[linear-gradient(180deg,_rgba(255,255,255,0.98),_rgba(255,251,235,0.92),_rgba(254,242,242,0.52))] px-6 text-center text-sm text-slate-500 shadow-[0_18px_42px_rgba(245,158,11,0.08)]">
@@ -980,6 +1179,7 @@ export default function StudioPage() {
     </div>
   );
 }
+
 
 
 

@@ -371,8 +371,7 @@ export default function StudioPage() {
     const reader = new FileReader();
     reader.onload = () => {
       const result = String(reader.result || "");
-      const base64 = result.includes(",") ? result.split(",")[1] : result;
-      setRefImage(base64);
+      setRefImage(result);
       setStatus(`已加载参考图：${file.name}`);
     };
     reader.onerror = () => setStatus("读取图片失败");
@@ -736,7 +735,7 @@ export default function StudioPage() {
                     <div className="relative overflow-hidden rounded-2xl border border-white/70 bg-[linear-gradient(135deg,_rgba(255,255,255,0.88),_rgba(224,242,254,0.74),_rgba(237,233,254,0.66))] shadow-[0_12px_28px_rgba(59,130,246,0.10)] backdrop-blur">
                       <div className="relative aspect-video">
                         <Image
-                          src={`data:image/png;base64,${refImage}`}
+                          src={refImage}
                           alt="参考图"
                           fill
                           className="object-contain"

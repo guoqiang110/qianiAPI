@@ -1,7 +1,8 @@
-import type { MetadataRoute } from "next";
+﻿import type { MetadataRoute } from "next";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const base = "https://qianxi-api.com";
+  const locales = ["zh", "en", "ja"];
   const pages = [
     "",
     "/models",
@@ -17,10 +18,16 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/console",
   ];
 
-  return pages.map((path) => ({
-    url: `${base}/zh${path}`,
-    lastModified: new Date(),
-    changeFrequency: (path === "" || path === "/changelog") ? "daily" : "weekly",
-    priority: path === "" ? 1 : path === "/models" || path === "/studio" ? 0.9 : 0.7,
-  })) as MetadataRoute.Sitemap;
+  const entries: MetadataRoute.Sitemap = [];
+  for (const locale of locales) {
+    for (const path of pages) {
+      entries.push({
+        url: `${base}/${locale}${path}`,
+        lastModified: new Date(),
+        changeFrequency: (path === "" || path === "/changelog") ? "daily" as const : "weekly" as const,
+        priority: path === "" ? 1 : path === "/models" || path === "/studio" ? 0.9 : 0.7,
+      });
+    }
+  }
+  return entries;
 }

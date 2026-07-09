@@ -98,6 +98,38 @@ export default async function RootLayout({
   return (
     <html lang={locale} className={theme} style={{ colorScheme: theme }}>
       <head>
+        {/* JSON-LD Structured Data for GEO */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              "name": "乾羲API",
+              "alternateName": "Qianxi API",
+              "url": "https://qianxi-api.com",
+              "description": "一套 API Key 调用全部 AI 模型",
+              "potentialAction": {
+                "@type": "SearchAction",
+                "target": "https://qianxi-api.com/zh/studio?q={search_term_string}",
+                "query-input": "required name=search_term_string",
+              },
+            }),
+          }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              "name": "乾羲API",
+              "url": "https://qianxi-api.com",
+              "logo": "https://qianxi-api.com/logo.png",
+              "sameAs": ["https://github.com/guoqiang110/qianiAPI"],
+            }),
+          }}
+        />
         {/* Performance Analysis Tool */}
         {env.NODE_ENV === "development" && (
           <script

@@ -145,6 +145,10 @@ function persistLibrary(items: LibraryItem[]) {
   } catch {}
 }
 
+function mergeLibraryItem(items: LibraryItem[], incoming: LibraryItem[]) {
+  return [...incoming, ...items].slice(0, 100);
+}
+
 function normalizeLibraryItem(input: unknown): LibraryItem | null {
   if (!input || typeof input !== "object") return null;
 
@@ -391,14 +395,18 @@ export default function StudioPage() {
       createdAt: new Date().toISOString(),
     };
 
-    if (!apiKey) {
+    function saveLocally(message: string) {
       setLibrary((prev) => {
-        const next = [item, ...prev].slice(0, 100);
+        const next = mergeLibraryItem(prev, [item]);
         persistLibrary(next);
         return next;
       });
       setLibraryMode("local");
-      setStatus("已保存到本地作品库");
+      setStatus(message);
+    }
+
+    if (!apiKey || libraryMode === "local") {
+      saveLocally("已保存到本地作品库");
       return;
     }
 
@@ -426,7 +434,8 @@ export default function StudioPage() {
       setLibraryMode("cloud");
       setStatus("已保存到云端作品库");
     } catch (error) {
-      setStatus(`保存到云端失败：${error instanceof Error ? error.message : "unknown"}`);
+      const reason = error instanceof Error ? error.message : "unknown";
+      saveLocally(`保存到云端失败，已转存到本地作品库：${reason}`);
     } finally {
       setLibraryBusy(false);
     }

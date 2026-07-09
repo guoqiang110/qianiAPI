@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
-import { Users, Copy, Wallet, TrendingUp, Loader2 } from "lucide-react";
+import { Users, Copy, Wallet, TrendingUp, Loader2, Check, X, Shield } from "lucide-react";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 
 type UserData = {
   username?: string; display_name?: string; group?: string;
@@ -34,6 +35,10 @@ export default function AgentPage() {
   const [msg, setMsg] = useState("");
   const [items, setItems] = useState<Record<string, unknown>[]>([]);
   const [submitting, setSubmitting] = useState(false);
+  const [adminKey, setAdminKey] = useState("");
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [pendingItems, setPendingItems] = useState<Record<string, unknown>[]>([]);
+  const [adminMsg, setAdminMsg] = useState("");
 
   useEffect(() => { init(); }, []);
 
@@ -78,6 +83,80 @@ export default function AgentPage() {
       setMsg(err instanceof Error ? err.message : "提交失败");
     } finally { setSubmitting(false); }
   }
+
+  async function loadAdmin() {
+    const key = adminKey || localStorage.getItem("qianxi_admin_key") || "";
+    if (!key) { setPendingItems([]); setIsAdmin(false); return; }
+    try {
+      const res = await fetch("/api/cn-image/withdraw/pending", { headers: { Authorization: "Bearer " + key } });
+      const data = await res.json();
+      if (res.ok) {
+        setPendingItems(data.withdrawals || []);
+        setIsAdmin(true);
+        if (key !== adminKey) setAdminKey(key);
+        localStorage.setItem("qianxi_admin_key", key);
+      } else {
+        setPendingItems([]);
+        setIsAdmin(false);
+        setAdminMsg(data.error || "管理员验证失败");
+      }
+    } catch { setPendingItems([]); setIsAdmin(false); }
+  }
+
+  async function approveWithdraw(id: number) {
+    const key = adminKey || localStorage.getItem("qianxi_admin_key") || "";
+    try {
+      const res = await fetch("/api/cn-image/withdraw/" + id, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", Authorization: "Bearer " + key },
+        body: JSON.stringify({ status: "approved" }),
+      });
+      const data = await res.json();
+      if (res.ok) { setAdminMsg("已批准"); loadAdmin(); } else { setAdminMsg(data.error || "操作失败"); }
+    } catch { setAdminMsg("网络错误"); }
+  }
+
+  async function rejectWithdraw(id: number) {
+    const key = adminKey || localStorage.getItem("qianxi_admin_key") || "";
+    try {
+      const res = await fetch("/api/cn-image/withdraw/" + id, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", Authorization: "Bearer " + key },
+        body: JSON.stringify({ status: "rejected" }),
+      });
+      const data = await res.json();
+      if (res.ok) { setAdminMsg("已拒绝"); loadAdmin(); } else { setAdminMsg(data.error || "操作失败"); }
+    } catch { setAdminMsg("网络错误"); }
+  }
+
+  // Compute chart data from customers and withdrawals
+  const customerChartData = (() => {
+    const monthly: Record<string, number> = {};
+    for (const c of customers) {
+      if (!c.created_at) continue;
+      const d = new Date(Number(c.created_at) * 1000);
+      const key = d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0");
+      monthly[key] = (monthly[key] || 0) + 1;
+    }
+    return Object.entries(monthly).sort().slice(-6).map(([m, v]) => ({ month: m, count: v }));
+  })();
+
+  const withdrawalChartData = (() => {
+    const monthly: Record<string, number> = {};
+    for (const w of items) {
+      const ts = typeof w.created_at === "string" ? new Date(w.created_at).getTime() : Number(w.created_at) * 1000;
+      if (isNaN(ts)) continue;
+      const d = new Date(ts);
+      const key = d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0");
+      monthly[key] = (monthly[key] || 0) + Number(w.amount || 0);
+    }
+    return Object.entries(monthly).sort().slice(-6).map(([m, v]) => ({ month: m, amount: parseFloat(v.toFixed(2)) }));
+  })();
+
+  const customerSpendData = customers
+    .map((c) => ({ name: c.displayName || c.username || "-", amount: yuan(Number(c.used_quota || 0)) }))
+    .sort((a, b) => parseFloat(b.amount) - parseFloat(a.amount))
+    .slice(0, 8);
 
   if (loading) {
     return (
@@ -148,6 +227,112 @@ export default function AgentPage() {
             </div>
           ))}
         </div>
+
+        {/* Admin Approval Panel */}
+        {isAdmin && (
+          <div className="rounded-[22px] border border-rose-200/70 bg-[linear-gradient(180deg,_rgba(255,245,245,0.96),_rgba(255,255,255,0.98))] p-5 shadow-[0_16px_32px_rgba(244,63,94,0.08)]">
+            <div className="flex items-center gap-2 mb-4">
+              <Shield className="h-4 w-4 text-rose-500" />
+              <h3 className="text-base font-extrabold text-slate-950">提现审批</h3>
+              <span className="ml-auto rounded-full bg-rose-100 px-2.5 py-0.5 text-xs font-bold text-rose-700">{pendingItems.length} 待处理</span>
+            </div>
+            {adminMsg && <p className="text-xs text-slate-500 mb-3">{adminMsg}</p>}
+            {pendingItems.length === 0 ? (
+              <p className="text-sm text-slate-400 py-6 text-center">暂无待审批的提现申请。</p>
+            ) : (
+              <div className="overflow-hidden rounded-xl border border-slate-100">
+                <div className="hidden grid-cols-6 gap-3 bg-slate-50 px-4 py-3 text-[11px] font-extrabold uppercase tracking-[0.12em] text-slate-400 sm:grid">
+                  <div>用户</div><div>金额</div><div>方式</div><div>时间</div><div className="col-span-2">操作</div>
+                </div>
+                {pendingItems.map((item) => (
+                  <div key={String(item.id)} className="grid grid-cols-3 gap-2 border-t border-slate-100 px-4 py-3 text-sm sm:grid-cols-6 sm:gap-3">
+                    <div className="font-semibold text-slate-900 truncate">{String(item.username || "-")}</div>
+                    <div className="font-bold text-rose-600">¥{Number(item.amount).toFixed(2)}</div>
+                    <div className="text-slate-500">{String(item.method || "balance")}</div>
+                    <div className="text-xs text-slate-400">{typeof item.created_at === "string" ? item.created_at.slice(0, 10) : ""}</div>
+                    <div className="col-span-2 flex gap-2">
+                      <button onClick={() => approveWithdraw(Number(item.id))} className="inline-flex h-8 items-center gap-1 rounded-lg bg-emerald-600 px-3 text-xs font-bold text-white hover:bg-emerald-700"><Check className="h-3 w-3" />批准</button>
+                      <button onClick={() => rejectWithdraw(Number(item.id))} className="inline-flex h-8 items-center gap-1 rounded-lg bg-slate-200 px-3 text-xs font-bold text-slate-700 hover:bg-slate-300"><X className="h-3 w-3" />拒绝</button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Admin Token Input */}
+        <div className="rounded-[22px] border border-slate-200/80 bg-[linear-gradient(180deg,_rgba(255,255,255,0.98),_rgba(248,250,252,0.98))] p-5">
+          <div className="flex items-center gap-2 mb-4">
+            <Shield className="h-4 w-4 text-slate-400" />
+            <h3 className="text-base font-extrabold text-slate-950">管理员入口</h3>
+          </div>
+          <div className="flex gap-3">
+            <input type="password" placeholder="输入管理员令牌..." value={adminKey} onChange={(e) => setAdminKey(e.target.value)} className="flex-1 h-11 rounded-xl border border-slate-200 bg-white px-4 text-sm outline-none focus:border-sky-400" />
+            <button onClick={loadAdmin} className="inline-flex h-11 items-center gap-2 rounded-xl bg-slate-950 px-4 text-sm font-bold text-white transition hover:opacity-90">{isAdmin ? "刷新" : "验证"}</button>
+          </div>
+        </div>
+
+        {/* Data Dashboard */}
+        {(customerChartData.length > 0 || withdrawalChartData.length > 0) && (
+          <div className="grid gap-6 lg:grid-cols-2">
+            {customerChartData.length > 0 && (
+              <div className="rounded-[22px] border border-violet-200/70 bg-[linear-gradient(180deg,_rgba(245,243,255,0.96),_rgba(255,255,255,0.98))] p-5">
+                <div className="flex items-center gap-2 mb-4">
+                  <TrendingUp className="h-4 w-4 text-violet-500" />
+                  <h3 className="text-sm font-extrabold text-slate-950">月度新增客户</h3>
+                </div>
+                <ResponsiveContainer width="100%" height={200}>
+                  <BarChart data={customerChartData}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                    <XAxis dataKey="month" tick={{ fontSize: 11 }} />
+                    <YAxis allowDecimals={false} tick={{ fontSize: 11 }} />
+                    <Tooltip />
+                    <Bar dataKey="count" fill="#8b5cf6" radius={[4,4,0,0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            )}
+            {withdrawalChartData.length > 0 && (
+              <div className="rounded-[22px] border border-emerald-200/70 bg-[linear-gradient(180deg,_rgba(236,253,245,0.96),_rgba(255,255,255,0.98))] p-5">
+                <div className="flex items-center gap-2 mb-4">
+                  <Wallet className="h-4 w-4 text-emerald-500" />
+                  <h3 className="text-sm font-extrabold text-slate-950">月度提现 (¥)</h3>
+                </div>
+                <ResponsiveContainer width="100%" height={200}>
+                  <BarChart data={withdrawalChartData}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                    <XAxis dataKey="month" tick={{ fontSize: 11 }} />
+                    <YAxis tick={{ fontSize: 11 }} />
+                    <Tooltip />
+                    <Bar dataKey="amount" fill="#10b981" radius={[4,4,0,0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Top Customers by Spend */}
+        {customerSpendData.length > 0 && (
+          <div className="rounded-[22px] border border-amber-200/70 bg-[linear-gradient(180deg,_rgba(255,251,235,0.96),_rgba(255,255,255,0.98))] p-5">
+            <div className="flex items-center gap-2 mb-4">
+              <TrendingUp className="h-4 w-4 text-amber-500" />
+              <h3 className="text-sm font-extrabold text-slate-950">客户消费排行 (¥)</h3>
+            </div>
+            <div className="overflow-hidden rounded-xl border border-slate-100">
+              {customerSpendData.map((c, i) => (
+                <div key={i} className="flex items-center justify-between border-t border-slate-100 px-4 py-2.5 text-sm first:border-t-0">
+                  <div className="flex items-center gap-3">
+                    <span className="text-xs font-bold text-slate-400 w-5">{i + 1}</span>
+                    <span className="font-semibold text-slate-900 truncate max-w-[160px]">{c.name}</span>
+                  </div>
+                  <span className="font-bold text-amber-600">¥{c.amount}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         <div className="grid gap-6 lg:grid-cols-[1fr_340px]">
           <div className="space-y-6">

@@ -563,6 +563,10 @@ export default function StudioPage() {
       setStatus("图生图模型需要上传参考图");
       return;
     }
+    if (isCnImageModel(model) && !apiKey) {
+      setStatus("国产模型需要填写 API Key");
+      return;
+    }
 
     setLoading(true);
     setStatus("正在生成图片...");
@@ -584,7 +588,7 @@ export default function StudioPage() {
       const headers: Record<string, string> = {
         "Content-Type": "application/json",
       };
-      if (apiKey && !isCnImageModel(model)) {
+      if (apiKey) {
         headers.Authorization = `Bearer ${apiKey}`;
       }
 

@@ -12,11 +12,11 @@ const findings = {
     "控制台后退问题 — 已修复，添加返回导航条",
   ],
   improved: [
-    "Schema.org JSON-LD — 已通过 layout metadata 覆盖 OpenGraph + Twitter Card",
+    "Schema.org JSON-LD — 7/9 已部署 Organization + WebSite 双实体",
     "About/Security 页面 — 文档页包含接入说明，安全信息在控制台",
     "VID/AUD/DOC 分类 0 模型 — 已精简为 3 分类（生图/图片处理/LLM）",
     "GitHub 仓库 — 已设为首选 https://github.com/guoqiang110/qianiAPI",
-    "品牌 Logo — 已在多页面应用、favicon 已统一",
+    "品牌 Logo — 已统一，JSON-LD 中已引用",
   ],
   ongoing: [
     "客户案例、媒体报道 — 待积累后补充",
@@ -34,10 +34,10 @@ export default function AuditPage() {
         <div className="mx-auto max-w-5xl px-6 py-14 lg:py-18">
           <div className="flex items-center gap-3 mb-3">
             <BarChart3 className="h-5 w-5 text-sky-600" />
-            <span className="inline-flex rounded-full border border-sky-200 bg-white/85 px-3 py-1 text-[11px] font-extrabold uppercase tracking-[0.24em] text-sky-700">GEO AUDIT · 2026-07-07</span>
+            <span className="inline-flex rounded-full border border-sky-200 bg-white/85 px-3 py-1 text-[11px] font-extrabold uppercase tracking-[0.24em] text-sky-700">GEO AUDIT · 2026-07-09</span>
           </div>
           <h1 className="text-4xl font-extrabold tracking-tight text-slate-950 lg:text-5xl">乾羲 GEO 诊断</h1>
-          <p className="mt-3 max-w-2xl text-lg leading-8 text-slate-600">qianxi-api.com 生成式引擎优化诊断报告。上次诊断 7/1 的 6 个 P0 问题已全部修复。</p>
+          <p className="mt-3 max-w-2xl text-lg leading-8 text-slate-600">qianxi-api.com 生成式引擎优化诊断报告。7/9 完成 JSON-LD 结构化数据、多语言 sitemap、robots.txt 部署。</p>
         </div>
       </section>
 
@@ -97,7 +97,7 @@ export default function AuditPage() {
 
         <div className="rounded-[22px] border border-slate-200/80 bg-white p-6 text-center">
           <Shield className="h-5 w-5 text-slate-400 mx-auto mb-2" />
-          <p className="text-sm text-slate-500">当前得分：P0 100% · P1 80% · 综合良好。下一步重点：品牌实体建设 + 内容沉淀。</p>
+          <p className="text-sm text-slate-500">当前得分：P0 100% · P1 90% · 综合良好。7/9 部署 JSON-LD + 多语言 sitemap + robots.txt。</p>
         </div>
       </div>
     </div>

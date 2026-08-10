@@ -34,7 +34,7 @@ related: ["what-is-geo", "geo-doubao-7-steps"]
 
 **避坑**：只在微信公众号发（封闭生态豆包难抓）；忽视互动度（字节系内容的阅读/完播/点赞直接抬升被引概率）。
 
-> 想深做豆包单项，见《[GEO 实操：让豆包收录你的 7 个动作](https://qianxi-api.com/zh/blog/geo-doubao-7-steps)》。
+> 想深做豆包单项，见《[GEO 实操：让豆包收录你的 7 个动作](https://qianxi-api.com/blog/geo-doubao-7-steps)》。
 
 ## 二、文心一言（百度）：SEO 继承 + 百度系生态
 
@@ -153,4 +153,4 @@ A：每月挑 10–20 个业务词，分别在豆包、文心、DeepSeek、Perpl
 
 想系统诊断你的内容在六大 AI 平台视角下的可引用性短板，去 [乾羲API GEO 工具集](https://qianxi-api.com/zh/tools) 做一次免费诊断；想边做内容边调用 108+ 模型做生成与改写，去 [控制台](https://qianxi-api.com/console) 创建 Key，按 [接入文档](https://qianxi-api.com/zh/docs) 配置网关即可。
 
-找现成 AI 应用看 [应用广场](https://qianxi-api.com/zh/apps)；模型清单见 [模型广场](https://qianxi-api.com/zh/models)；出图配内容去 [生图工作台](https://qianxi-api.com/zh/studio)。方法论总览见枢纽页《[什么是 GEO？让豆包、文心、Perplexity 优先收录你的内容](https://qianxi-api.com/zh/blog/what-is-geo)》。
+找现成 AI 应用看 [应用广场](https://qianxi-api.com/zh/apps)；模型清单见 [模型广场](https://qianxi-api.com/zh/models)；出图配内容去 [生图工作台](https://qianxi-api.com/zh/studio)。方法论总览见枢纽页《[什么是 GEO？让豆包、文心、Perplexity 优先收录你的内容](https://qianxi-api.com/blog/what-is-geo)》。

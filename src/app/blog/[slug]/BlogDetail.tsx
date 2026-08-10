@@ -10,18 +10,17 @@ export type BlogDetailProps = {
 /**
  * Client Component that renders the blog article body.
  *
- * Why a Client Component: under this project's dynamic (cookies) layout + the
- * [locale]/loading.tsx Suspense boundary, Server Component output is streamed
- * as RSC flight data (invisible to non-JS crawlers). A Client Component is
- * server-rendered to REAL DOM on initial SSR — so Baidu/Google see the full
- * article text in the static HTML. The pre-rendered `html` string is prepared
- * server-side (marked) and passed in as a prop.
+ * Under the static root layout (`app/blog` is NOT under the dynamic [locale]
+ * tree), this component is pre-rendered to REAL DOM at build time. The full
+ * article text (pre-rendered to an HTML string via `marked` on the server) is
+ * present in the initial static HTML — so Baidu/Google index the content
+ * directly, without executing JS.
  */
 export default function BlogDetail({ article, related }: BlogDetailProps) {
   return (
     <>
       <a
-        href="/zh/blog"
+        href="/blog"
         className="text-sm text-slate-400 transition hover:text-sky-700"
       >
         ← 返回博客
@@ -74,7 +73,7 @@ export default function BlogDetail({ article, related }: BlogDetailProps) {
               {related.map((r) => (
                 <a
                   key={r.slug}
-                  href={`/zh/blog/${r.slug}`}
+                  href={`/blog/${r.slug}`}
                   className="group rounded-xl border border-slate-200 bg-white p-5 transition hover:border-sky-300 hover:shadow-[0_14px_32px_rgba(37,99,235,0.10)]"
                 >
                   <h3 className="font-semibold leading-7 text-slate-900 group-hover:text-sky-700">

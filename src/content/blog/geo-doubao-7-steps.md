@@ -117,4 +117,4 @@ A：取消了单篇内容的高权重引用特权，转向多信源交叉验证�
 
 想先看清你的内容在豆包视角下的可引用性短板，去 [乾羲API GEO 工具集](https://qianxi-api.com/zh/tools) 做一次免费诊断；想边做内容边调用 108+ 模型做生成与改写，去 [控制台](https://qianxi-api.com/console) 创建一个 Key，按 [接入文档](https://qianxi-api.com/zh/docs) 配置网关即可。
 
-找现成 AI 应用看 [应用广场](https://qianxi-api.com/zh/apps)；模型清单见 [模型广场](https://qianxi-api.com/zh/models)。更全面的方法论见枢纽页《[什么是 GEO？让豆包、文心、Perplexity 优先收录你的内容](https://qianxi-api.com/zh/blog/what-is-geo)》。
+找现成 AI 应用看 [应用广场](https://qianxi-api.com/zh/apps)；模型清单见 [模型广场](https://qianxi-api.com/zh/models)。更全面的方法论见枢纽页《[什么是 GEO？让豆包、文心、Perplexity 优先收录你的内容](https://qianxi-api.com/blog/what-is-geo)》。

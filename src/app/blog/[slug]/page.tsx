@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import {
   extractFaq,
-  getArticleBySlug,
   getAllArticles,
+  getAllSlugs,
+  getArticleBySlug,
   renderMarkdownToHtml,
   toLite,
 } from "@/lib/blog";
@@ -11,17 +12,20 @@ import BlogDetail from "./BlogDetail";
 
 const SITE = "https://qianxi-api.com";
 
+export function generateStaticParams() {
+  return getAllSlugs().map((slug) => ({ slug }));
+}
+
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ locale: string; slug: string }>;
+  params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
-  const { locale, slug } = await params;
-  if (locale !== "zh") return {};
+  const { slug } = await params;
   const article = getArticleBySlug(slug);
   if (!article) return {};
 
-  const url = `/zh/blog/${slug}`;
+  const url = `/blog/${slug}`;
   return {
     title: `${article.title} | 乾羲API`,
     description: article.description,
@@ -50,16 +54,14 @@ export async function generateMetadata({
 export default async function BlogArticlePage({
   params,
 }: {
-  params: Promise<{ locale: string; slug: string }>;
+  params: Promise<{ slug: string }>;
 }) {
-  const { locale, slug } = await params;
-  if (locale !== "zh") notFound();
-
+  const { slug } = await params;
   const article = getArticleBySlug(slug);
   if (!article) notFound();
 
   const faq = extractFaq(article.content);
-  const articleUrl = `${SITE}/zh/blog/${slug}`;
+  const articleUrl = `${SITE}/blog/${slug}`;
   const html = renderMarkdownToHtml(article.content);
 
   const related = article.related
@@ -95,7 +97,7 @@ export default async function BlogArticlePage({
     "@type": "BreadcrumbList",
     itemListElement: [
       { "@type": "ListItem", position: 1, name: "首页", item: `${SITE}/zh` },
-      { "@type": "ListItem", position: 2, name: "博客", item: `${SITE}/zh/blog` },
+      { "@type": "ListItem", position: 2, name: "博客", item: `${SITE}/blog` },
       { "@type": "ListItem", position: 3, name: article.title, item: articleUrl },
     ],
   };

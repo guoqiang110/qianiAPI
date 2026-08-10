@@ -33,7 +33,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   // Blog (Chinese / zh only — content is China-focused SEO)
   for (const slug of BLOG_SLUGS) {
     entries.push({
-      url: `${base}/zh/blog/${slug}`,
+      url: `${base}/blog/${slug}`,
       lastModified: new Date(),
       changeFrequency: "weekly",
       priority: 0.8,

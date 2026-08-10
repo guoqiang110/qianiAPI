@@ -4,8 +4,11 @@ import type { ArticleLite } from "@/lib/blog";
 
 /**
  * Client Component rendering the blog index grid.
- * SSRs to real DOM on initial render (visible to crawlers), mirroring the
- * project's existing client-rendered pages under the dynamic [locale] layout.
+ *
+ * Under the static root layout (`app/blog` is NOT under the dynamic [locale]
+ * tree), this component is pre-rendered to REAL DOM at build time — the
+ * article titles, descriptions and links are present in the initial static
+ * HTML, visible to crawlers that don't execute JS.
  */
 export default function BlogIndex({ articles }: { articles: ArticleLite[] }) {
   return (
@@ -24,7 +27,7 @@ export default function BlogIndex({ articles }: { articles: ArticleLite[] }) {
         {articles.map((a) => (
           <a
             key={a.slug}
-            href={`/zh/blog/${a.slug}`}
+            href={`/blog/${a.slug}`}
             className="group flex flex-col rounded-2xl border border-slate-200 bg-white p-6 transition hover:border-sky-300 hover:shadow-[0_18px_40px_rgba(37,99,235,0.10)]"
           >
             <span className="text-xs font-semibold text-sky-700">

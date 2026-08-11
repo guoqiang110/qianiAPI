@@ -74,3 +74,33 @@ jobs:
             if [ "$HTTP_CODE" != "200" ] && [ "$HTTP_CODE" != "307" ]; then
               echo "WARN: unexpected status $HTTP_CODE"
             fi
+
+      - name: Deploy nginx config
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "qianxi-api.com.conf"
+          target: "/tmp/"
+
+      - name: Reload nginx
+        uses: appleboy/ssh-action@v1.2.2
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            SRC=/tmp/qianxi-api.com.conf
+            [ -f "$SRC" ] || { echo "WARN: nginx conf not uploaded, skip"; exit 0; }
+            CONF_PATH=$(nginx -T 2>/dev/null | grep -i "qianxi-api.com.conf" | head -1 | sed -E 's/.*configuration file[[:space:]]+//; s/:.*//')
+            [ -z "$CONF_PATH" ] && [ -d /etc/nginx/conf.d ] && CONF_PATH=/etc/nginx/conf.d/qianxi-api.com.conf
+            [ -z "$CONF_PATH" ] && { echo "WARN: cannot locate nginx conf path, skip"; exit 0; }
+            echo "Deploying nginx conf -> $CONF_PATH"
+            cp -f "$SRC" "$CONF_PATH" || { echo "WARN: copy failed (permission?), skip"; exit 0; }
+            if nginx -t; then
+              systemctl reload nginx 2>/dev/null || nginx -s reload 2>/dev/null || echo "WARN: reload command failed; new config is in place but not reloaded"
+              echo "nginx config deployed & reloaded"
+            else
+              echo "WARN: nginx -t failed; config replaced but not reloaded - please verify $CONF_PATH"
+            fi

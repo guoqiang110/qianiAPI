@@ -1,3 +1,0 @@
-User-agent: *
-Allow: /
-Sitemap: https://qianxi-api.com/sitemap.xml

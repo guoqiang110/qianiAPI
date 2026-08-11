@@ -91,9 +91,9 @@ function readFileUrls(file) {
 
 /** 调用百度推送接口 */
 async function push(urls, { site, token }) {
-  const endpoint = `${API}?site=${encodeURIComponent(site)}&token=${encodeURIComponent(
-    token
-  )}`;
+  // Baidu's endpoint rejects URL-encoded site parameter (returns "site init fail"),
+  // so pass site and token literally.
+  const endpoint = `${API}?site=${site}&token=${token}`;
   const res = await fetch(endpoint, {
     method: "POST",
     headers: { "Content-Type": "text/plain" },

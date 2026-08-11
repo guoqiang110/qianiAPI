@@ -21,6 +21,10 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="zh-CN" suppressHydrationWarning>
       <head>
+        <meta
+          name="baidu-site-verification"
+          content="codeva-njEJG6OjKw"
+        />
         {/* Site-wide structured data (migrated from the old [locale] root) */}
         <script
           type="application/ld+json"

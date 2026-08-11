@@ -70,6 +70,11 @@ export async function generateMetadata(
       site: `${baseUrl}/${locale}`,
       images,
     },
+    verification: {
+      other: {
+        "baidu-site-verification": "codeva-njEJG6OjKw",
+      },
+    },
   };
 }
 

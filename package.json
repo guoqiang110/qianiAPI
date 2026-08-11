@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "push:baidu": "node scripts/baidu-push.mjs",
     "prepare": "husky",
     "commitlint": "commitlint",
     "commit": "git-cz"

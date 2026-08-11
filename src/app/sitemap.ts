@@ -1,4 +1,5 @@
 ﻿import type { MetadataRoute } from "next";
+import { BLOG_SLUGS } from "@/lib/blog-slugs";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const base = "https://qianxi-api.com";
@@ -29,5 +30,21 @@ export default function sitemap(): MetadataRoute.Sitemap {
       });
     }
   }
+  // Blog (Chinese / zh only — content is China-focused SEO)
+  for (const slug of BLOG_SLUGS) {
+    entries.push({
+      url: `${base}/blog/${slug}`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.8,
+    });
+  }
+  entries.push({
+    url: `${base}/zh/blog`,
+    lastModified: new Date(),
+    changeFrequency: "daily",
+    priority: 0.8,
+  });
+
   return entries;
 }

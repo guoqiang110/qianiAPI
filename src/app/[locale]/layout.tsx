@@ -11,7 +11,6 @@ import AppTooltip from "@/components/global/app-tooltip";
 import BackToTop from "@/components/global/back-to-top";
 import { GLOBAL, SEO_DATA } from "@/constants";
 import { env } from "@/env";
-import "@/styles/globals.css";
 
 import { cookies, headers } from "next/headers";
 import { notFound } from "next/navigation";
@@ -96,70 +95,26 @@ export default async function RootLayout({
   const messages = await getMessages();
 
   return (
-    <html lang={locale} className={theme} style={{ colorScheme: theme }}>
-      <head>
-        {/* JSON-LD Structured Data for GEO */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "WebSite",
-              "name": "乾羲API",
-              "alternateName": "Qianxi API",
-              "url": "https://qianxi-api.com",
-              "description": "一套 API Key 调用全部 AI 模型",
-              "potentialAction": {
-                "@type": "SearchAction",
-                "target": "https://qianxi-api.com/zh/studio?q={search_term_string}",
-                "query-input": "required name=search_term_string",
-              },
-            }),
-          }}
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "Organization",
-              "name": "乾羲API",
-              "url": "https://qianxi-api.com",
-              "logo": "https://qianxi-api.com/logo.png",
-              "sameAs": ["https://github.com/guoqiang110/qianiAPI"],
-            }),
-          }}
-        />
-        {/* Performance Analysis Tool */}
-        {env.NODE_ENV === "development" && (
-          <script
-            src="https://unpkg.com/react-scan/dist/auto.global.js"
-            async
-          ></script>
-        )}
-      </head>
-      <body className="flex flex-col antialiased">
-        {/* Force theme to be set on client side, to avoid hydration error on first render */}
-        <AppTheme theme={theme}>
-          <NextIntlClientProvider messages={messages}>
-            <AppJotai>
-              <AppClient>
-                <AppTooltip>
-                  <AppHeader />
-                  <main className="flex grow">{children}</main>
-                  <AppFooter />
-                </AppTooltip>
-                <AppAuth />
-                <AppChat />
-                <AppClickMonitor />
-              </AppClient>
-              <AppMessage />
-            </AppJotai>
-          </NextIntlClientProvider>
-        </AppTheme>
-                <BackToTop />
-      </body>
-    </html>
+    <>
+      <AppTheme theme={theme}>
+        <NextIntlClientProvider messages={messages}>
+          <AppJotai>
+            <AppClient>
+              <AppTooltip>
+                <AppHeader />
+                <main className="flex grow">{children}</main>
+                <AppFooter />
+              </AppTooltip>
+              <AppAuth />
+              <AppChat />
+              <AppClickMonitor />
+            </AppClient>
+            <AppMessage />
+          </AppJotai>
+        </NextIntlClientProvider>
+      </AppTheme>
+      <BackToTop />
+    </>
   );
 }
 

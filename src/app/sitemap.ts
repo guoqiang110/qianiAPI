@@ -2,7 +2,7 @@
 import { BLOG_SLUGS } from "@/lib/blog-slugs";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const base = "https://qianxi-api.com";
+  const base = "https://www.qianxi-api.com";
   const locales = ["zh", "en", "ja"];
   const pages = [
     "",

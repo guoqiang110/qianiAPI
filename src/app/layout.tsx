@@ -4,7 +4,7 @@ import "@/styles/globals.css";
 import { env } from "@/env";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://qianxi-api.com"),
+  metadataBase: new URL("https://www.qianxi-api.com"),
 };
 
 /**
@@ -34,11 +34,11 @@ export default function RootLayout({ children }: { children: ReactNode }) {
               "@type": "WebSite",
               name: "乾羲API",
               alternateName: "Qianxi API",
-              url: "https://qianxi-api.com",
+              url: "https://www.qianxi-api.com",
               description: "一套 API Key 调用全部 AI 模型",
               potentialAction: {
                 "@type": "SearchAction",
-                target: "https://qianxi-api.com/zh/studio?q={search_term_string}",
+                target: "https://www.qianxi-api.com/zh/studio?q={search_term_string}",
                 "query-input": "required name=search_term_string",
               },
             }),
@@ -51,8 +51,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
               "@context": "https://schema.org",
               "@type": "Organization",
               name: "乾羲API",
-              url: "https://qianxi-api.com",
-              logo: "https://qianxi-api.com/logo.png",
+              url: "https://www.qianxi-api.com",
+              logo: "https://www.qianxi-api.com/logo.png",
               sameAs: ["https://github.com/guoqiang110/qianiAPI"],
             }),
           }}

@@ -11,11 +11,11 @@
  *   node scripts/baidu-push.mjs --file urls.txt  # 从本地文件推送（每行一个 URL）
  *   node scripts/baidu-push.mjs --dry-run        # 只打印待推送 URL，不发送
  *   node scripts/baidu-push.mjs --limit 10       # 只推送前 N 条（先验证用）
- *   node scripts/baidu-push.mjs --site https://qianxi-api.com --token xxxx
+ *   node scripts/baidu-push.mjs --site https://www.qianxi-api.com --token xxxx
  *
  * 凭据（不要写进代码 / 仓库）：
  *   BAIDU_PUSH_TOKEN  必填，站点在百度搜索资源平台「数据引入 → 链接提交 → 主动推送」处的 token
- *   BAIDU_SITE        可选，默认 https://qianxi-api.com
+ *   BAIDU_SITE        可选，默认 https://www.qianxi-api.com
  *
  * 退出码：0=成功；1=参数/网络/推送失败；2=未知参数。
  */
@@ -30,7 +30,7 @@ function parseArgs(argv) {
     file: null,
     dryRun: false,
     limit: 0,
-    site: process.env.BAIDU_SITE || "https://qianxi-api.com",
+    site: process.env.BAIDU_SITE || "https://www.qianxi-api.com",
     token: process.env.BAIDU_PUSH_TOKEN || "",
   };
   for (let i = 2; i < argv.length; i++) {
@@ -59,7 +59,7 @@ function printHelp() {
 
 选项：
   --file <path>    从本地文件读取 URL（每行一个），代替抓取 sitemap
-  --site <url>     站点地址（默认取 BAIDU_SITE 或 https://qianxi-api.com）
+  --site <url>     站点地址（默认取 BAIDU_SITE 或 https://www.qianxi-api.com）
   --token <token>  推送 token（默认取 BAIDU_PUSH_TOKEN 环境变量）
   --limit <n>      只推送前 n 条 URL
   --dry-run        只打印待推送 URL，不实际发送

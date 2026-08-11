@@ -65,7 +65,7 @@ jobs:
             systemctl stop qianxi-app 2>/dev/null || true
             fuser -k 4175/tcp 2>/dev/null || true
             sleep 2
-            rm -rf .next
+            rm -rf .next public
             tar -xzf /opt/qianxi-next-build.tar.gz
             systemctl start qianxi-app
             sleep 4
